@@ -100,9 +100,25 @@
    100 00000076 F62D(0E000000)              imul    byte [bNum3]
    101 0000007C 668905(06000000)            mov     [wAns11], ax
    102                                  
-   103                                  divide:
-   104                                  
-   105                                  last:
-   106 00000083 B801000002                  mov     rax, SYS_exit
-   107 00000088 BF00000000                  mov     rdi, SUCCESS
-   108 0000008D 0F05                        syscall
+   103                                  ; -----
+   104                                  ; wAns12 = bNum2 * bNum2
+   105                                  
+   106 00000083 66B80000                    mov     ax, 0
+   107 00000087 8A05(0D000000)              mov     al, [bNum2]
+   108 0000008D F62D(0D000000)              imul    byte [bNum2]
+   109 00000093 668905(08000000)            mov     [wAns12], ax
+   110                                  
+   111                                  ; -----
+   112                                  ; wAns13 = bNum2 * bNum4
+   113                                  
+   114 0000009A 66B80000                    mov     ax, 0
+   115 0000009E 8A05(0D000000)              mov     al, [bNum2]
+   116 000000A4 F62D(0F000000)              imul    byte [bNum4]
+   117 000000AA 668905(0A000000)            mov     [wAns13], ax
+   118                                  
+   119                                  divide:
+   120                                  
+   121                                  last:
+   122 000000B1 B801000002                  mov     rax, SYS_exit
+   123 000000B6 BF00000000                  mov     rdi, SUCCESS
+   124 000000BB 0F05                        syscall

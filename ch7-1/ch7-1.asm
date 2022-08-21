@@ -100,6 +100,22 @@ multiply:
     imul    byte [bNum3]
     mov     [wAns11], ax
 
+; -----
+; wAns12 = bNum2 * bNum2
+
+    mov     ax, 0
+    mov     al, [bNum2]
+    imul    byte [bNum2]
+    mov     [wAns12], ax
+
+; -----
+; wAns13 = bNum2 * bNum4
+
+    mov     ax, 0
+    mov     al, [bNum2]
+    imul    byte [bNum4]
+    mov     [wAns13], ax
+
 divide:
 
 last:
