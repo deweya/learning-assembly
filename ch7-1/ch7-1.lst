@@ -7,88 +7,102 @@
      7                                  ; bAns6 = bNum1 - bNum2
      8                                  ; bAns7 = bNum1 - bNum3
      9                                  ; bAns8 = bNum2 - bNum4
-    10                                  
-    11                                  DEFAULT REL
-    12                                  
-    13                                  ; *************************
-    14                                  
-    15                                  section     .data
-    16                                  
-    17                                  ; Constants
-    18                                  SUCCESS     equ     0
-    19                                  SYS_exit    equ     0x2000001
-    20                                  
-    21                                  ; Answers
-    22 00000000 00                      bAns1       db      0
-    23 00000001 00                      bAns2       db      0
-    24 00000002 00                      bAns3       db      0
-    25 00000003 00                      bAns6       db      0
-    26 00000004 00                      bAns7       db      0
-    27 00000005 00                      bAns8       db      0
-    28                                  
-    29                                  ; Operands
-    30 00000006 05                      bNum1       db      5
-    31 00000007 0A                      bNum2       db      10
-    32 00000008 0F                      bNum3       db      15
-    33 00000009 14                      bNum4       db      20
+    10                                  ; wAns11 = bNum1 * bNum3
+    11                                  ; wAns12 = bNum2 * bNum2
+    12                                  ; wAns13 = bNum2 * bNum4
+    13                                  
+    14                                  DEFAULT REL
+    15                                  
+    16                                  ; *************************
+    17                                  
+    18                                  section     .data
+    19                                  
+    20                                  ; Constants
+    21                                  SUCCESS     equ     0
+    22                                  SYS_exit    equ     0x2000001
+    23                                  
+    24                                  ; Answers
+    25 00000000 00                      bAns1       db      0
+    26 00000001 00                      bAns2       db      0
+    27 00000002 00                      bAns3       db      0
+    28 00000003 00                      bAns6       db      0
+    29 00000004 00                      bAns7       db      0
+    30 00000005 00                      bAns8       db      0
+    31 00000006 0000                    wAns11      dw      0
+    32 00000008 0000                    wAns12      dw      0
+    33 0000000A 0000                    wAns13      dw      0
     34                                  
-    35                                  ; *************************
-    36                                  
-    37                                  section     .text
-    38                                  global _start
-    39                                  _start:
+    35                                  ; Operands
+    36 0000000C 05                      bNum1       db      5
+    37 0000000D 0A                      bNum2       db      10
+    38 0000000E 0F                      bNum3       db      15
+    39 0000000F 14                      bNum4       db      20
     40                                  
-    41                                  add:
+    41                                  ; *************************
     42                                  
-    43                                  ; -----
-    44                                  ; bAns1 = bNum1 + bNum2
-    45                                  
-    46 00000000 8A05(06000000)              mov     al, [bNum1]
-    47 00000006 0205(07000000)              add     al, [bNum2]
-    48 0000000C 8805(00000000)              mov     [bAns1], al
-    49                                  
-    50                                  ; -----
-    51                                  ; bAns2 = bNum1 + bNum3
-    52                                  
-    53 00000012 8A05(06000000)              mov     al, [bNum1]
-    54 00000018 0205(08000000)              add     al, [bNum3]
-    55 0000001E 8805(01000000)              mov     [bAns2], al
-    56                                  
-    57                                  ; -----
-    58                                  ; bAns3 = bNum3 + bNum4
-    59                                  
-    60 00000024 8A05(08000000)              mov     al, [bNum3]
-    61 0000002A 0205(09000000)              add     al, [bNum4]
-    62 00000030 8805(02000000)              mov     [bAns3], al
-    63                                  
-    64                                  subtract:
+    43                                  section     .text
+    44                                  global _start
+    45                                  _start:
+    46                                  
+    47                                  add:
+    48                                  
+    49                                  ; -----
+    50                                  ; bAns1 = bNum1 + bNum2
+    51                                  
+    52 00000000 8A05(0C000000)              mov     al, [bNum1]
+    53 00000006 0205(0D000000)              add     al, [bNum2]
+    54 0000000C 8805(00000000)              mov     [bAns1], al
+    55                                  
+    56                                  ; -----
+    57                                  ; bAns2 = bNum1 + bNum3
+    58                                  
+    59 00000012 8A05(0C000000)              mov     al, [bNum1]
+    60 00000018 0205(0E000000)              add     al, [bNum3]
+    61 0000001E 8805(01000000)              mov     [bAns2], al
+    62                                  
+    63                                  ; -----
+    64                                  ; bAns3 = bNum3 + bNum4
     65                                  
-    66                                  ; -----
-    67                                  ; bAns6 = bNum1 - bNum2
-    68                                  
-    69 00000036 8A05(06000000)              mov     al, [bNum1]
-    70 0000003C 2A05(07000000)              sub     al, [bNum2]
-    71 00000042 8805(03000000)              mov     [bAns6], al
-    72                                  
-    73                                  ; -----
-    74                                  ; bAns7 = bNum1 - bNum3
-    75                                  
-    76 00000048 8A05(06000000)              mov     al, [bNum1]
-    77 0000004E 2A05(08000000)              sub     al, [bNum3]
-    78 00000054 8805(04000000)              mov     [bAns7], al
-    79                                  
-    80                                  ; -----
-    81                                  ; bAns8 = bNum2 - bNum4
-    82                                  
-    83 0000005A 8A05(07000000)              mov     al, [bNum2]
-    84 00000060 2A05(09000000)              sub     al, [bNum4]
-    85 00000066 8805(05000000)              mov     [bAns8], al
-    86                                  
-    87                                  multiply:
+    66 00000024 8A05(0E000000)              mov     al, [bNum3]
+    67 0000002A 0205(0F000000)              add     al, [bNum4]
+    68 00000030 8805(02000000)              mov     [bAns3], al
+    69                                  
+    70                                  subtract:
+    71                                  
+    72                                  ; -----
+    73                                  ; bAns6 = bNum1 - bNum2
+    74                                  
+    75 00000036 8A05(0C000000)              mov     al, [bNum1]
+    76 0000003C 2A05(0D000000)              sub     al, [bNum2]
+    77 00000042 8805(03000000)              mov     [bAns6], al
+    78                                  
+    79                                  ; -----
+    80                                  ; bAns7 = bNum1 - bNum3
+    81                                  
+    82 00000048 8A05(0C000000)              mov     al, [bNum1]
+    83 0000004E 2A05(0E000000)              sub     al, [bNum3]
+    84 00000054 8805(04000000)              mov     [bAns7], al
+    85                                  
+    86                                  ; -----
+    87                                  ; bAns8 = bNum2 - bNum4
     88                                  
-    89                                  divide:
-    90                                  
-    91                                  last:
-    92 0000006C B801000002                  mov     rax, SYS_exit
-    93 00000071 BF00000000                  mov     rdi, SUCCESS
-    94 00000076 0F05                        syscall
+    89 0000005A 8A05(0D000000)              mov     al, [bNum2]
+    90 00000060 2A05(0F000000)              sub     al, [bNum4]
+    91 00000066 8805(05000000)              mov     [bAns8], al
+    92                                  
+    93                                  multiply:
+    94                                  
+    95                                  ; -----
+    96                                  ; wAns11 = bNum1 * bNum3
+    97                                  
+    98 0000006C 66B80000                    mov     ax, 0                   ; Need to zero out entire word
+    99 00000070 8A05(0C000000)              mov     al, [bNum1]
+   100 00000076 F62D(0E000000)              imul    byte [bNum3]
+   101 0000007C 668905(06000000)            mov     [wAns11], ax
+   102                                  
+   103                                  divide:
+   104                                  
+   105                                  last:
+   106 00000083 B801000002                  mov     rax, SYS_exit
+   107 00000088 BF00000000                  mov     rdi, SUCCESS
+   108 0000008D 0F05                        syscall

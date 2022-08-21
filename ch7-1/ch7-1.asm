@@ -7,6 +7,9 @@
 ; bAns6 = bNum1 - bNum2
 ; bAns7 = bNum1 - bNum3
 ; bAns8 = bNum2 - bNum4
+; wAns11 = bNum1 * bNum3
+; wAns12 = bNum2 * bNum2
+; wAns13 = bNum2 * bNum4
 
 DEFAULT REL
 
@@ -25,6 +28,9 @@ bAns3       db      0
 bAns6       db      0
 bAns7       db      0
 bAns8       db      0
+wAns11      dw      0
+wAns12      dw      0
+wAns13      dw      0
 
 ; Operands
 bNum1       db      5
@@ -85,6 +91,14 @@ subtract:
     mov     [bAns8], al
 
 multiply:
+
+; -----
+; wAns11 = bNum1 * bNum3
+
+    mov     ax, 0                   ; Need to zero out entire word
+    mov     al, [bNum1]
+    imul    byte [bNum3]
+    mov     [wAns11], ax
 
 divide:
 
