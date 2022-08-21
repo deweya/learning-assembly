@@ -135,7 +135,33 @@
    135 000000BB F635(11000000)              div     byte [bNum2]
    136 000000C1 8805(0C000000)              mov     [bAns16], al
    137                                  
-   138                                  last:
-   139 000000C7 B801000002                  mov     rax, SYS_exit
-   140 000000CC BF00000000                  mov     rdi, SUCCESS
-   141 000000D1 0F05                        syscall
+   138                                  ; -----
+   139                                  ; bAns17 = bNum3 / bNum4
+   140                                  
+   141 000000C7 66B80000                    mov     ax, 0
+   142 000000CB 8A05(12000000)              mov     al, [bNum3]
+   143 000000D1 F635(13000000)              div     byte [bNum4]
+   144 000000D7 8805(0D000000)              mov     [bAns17], al
+   145                                  
+   146                                  ; -----
+   147                                  ; bAns18 = wNum1 / bNum4
+   148                                  
+   149 000000DD 66B80000                    mov     ax, 0
+   150 000000E1 668B05(14000000)            mov     ax, [wNum1]
+   151 000000E8 F635(13000000)              div     byte [bNum4]
+   152 000000EE 8805(0E000000)              mov     [bAns18], al
+   153                                  
+   154                                  modulo:
+   155                                  
+   156                                  ; -----
+   157                                  ; bRem18 = wNum1 % bNum4
+   158                                  
+   159 000000F4 66B80000                    mov     ax, 0
+   160 000000F8 668B05(14000000)            mov     ax, [wNum1]
+   161 000000FF F635(13000000)              div     byte [bNum4]
+   162 00000105 8825(0F000000)              mov     [bRem18], ah
+   163                                  
+   164                                  last:
+   165 0000010B B801000002                  mov     rax, SYS_exit
+   166 00000110 BF00000000                  mov     rdi, SUCCESS
+   167 00000115 0F05                        syscall

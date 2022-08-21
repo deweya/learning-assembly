@@ -135,6 +135,32 @@ divide:
     div     byte [bNum2]
     mov     [bAns16], al
 
+; -----
+; bAns17 = bNum3 / bNum4
+
+    mov     ax, 0
+    mov     al, [bNum3]
+    div     byte [bNum4]
+    mov     [bAns17], al
+
+; -----
+; bAns18 = wNum1 / bNum4
+
+    mov     ax, 0
+    mov     ax, [wNum1]
+    div     byte [bNum4]
+    mov     [bAns18], al
+
+modulo:
+
+; -----
+; bRem18 = wNum1 % bNum4
+
+    mov     ax, 0
+    mov     ax, [wNum1]
+    div     byte [bNum4]
+    mov     [bRem18], ah
+
 last:
     mov     rax, SYS_exit
     mov     rdi, SUCCESS
