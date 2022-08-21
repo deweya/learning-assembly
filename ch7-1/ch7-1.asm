@@ -35,13 +35,25 @@ _start:
 ; -----
 ; bAns1 = bNum1 + bNum2
 
-    mov     al, 0
-    add     al, [bNum1]
+    mov     al, [bNum1]
     add     al, [bNum2]
     mov     [bAns1], al
 
 ; -----
-; 
+; bAns2 = bNum1 + bNum3
+
+    mov     al, [bNum1]
+    add     al, [bNum3]
+    mov     [bAns2], al
+
+; -----
+; bAns3 = bNum3 + bNum4
+
+    mov     al, [bNum3]
+    add     al, [bNum4]
+    mov     [bAns3], al
+
+; -----
 
 last:
     mov     rax, SYS_exit
