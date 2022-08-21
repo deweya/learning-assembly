@@ -35,14 +35,15 @@
     35                                  ; -----
     36                                  ; bAns1 = bNum1 + bNum2
     37                                  
-    38 00000000 B800000000                  mov     rax, 0
-    39 00000005 480305(03000000)            add     rax, [bNum1]
-    40 0000000C 480305(04000000)            add     rax, [bNum2]
-    41 00000013 488905(00000000)            mov     [bAns1], rax
+    38 00000000 B000                        mov     al, 0
+    39 00000002 0205(03000000)              add     al, [bNum1]
+    40 00000008 0205(04000000)              add     al, [bNum2]
+    41 0000000E 8805(00000000)              mov     [bAns1], al
     42                                  
     43                                  ; -----
-    44                                  
-    45                                  last:
-    46 0000001A B801000002                  mov     rax, SYS_exit
-    47 0000001F BF00000000                  mov     rdi, SUCCESS
-    48 00000024 0F05                        syscall
+    44                                  ; 
+    45                                  
+    46                                  last:
+    47 00000014 B801000002                  mov     rax, SYS_exit
+    48 00000019 BF00000000                  mov     rdi, SUCCESS
+    49 0000001E 0F05                        syscall
