@@ -32,6 +32,8 @@ section     .text
 global _start
 _start:
 
+add:
+
 ; -----
 ; bAns1 = bNum1 + bNum2
 
@@ -53,7 +55,11 @@ _start:
     add     al, [bNum4]
     mov     [bAns3], al
 
-; -----
+subtract:
+
+multiply:
+
+divide:
 
 last:
     mov     rax, SYS_exit
