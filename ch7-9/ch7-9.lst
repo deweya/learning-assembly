@@ -15,7 +15,7 @@
     15                                  SYS_exit    equ     0x2000001
     16                                  
     17                                  ; Variables
-    18 00000000 05                      n           db      5                   ; Argument to fib(n)
+    18 00000000 0A                      n           db      10                  ; Argument to fib(n)
     19 00000001 00000000                fibnum      dd      0                   ; The nth Fibonacci number
     20                                  
     21                                  ; *********************
@@ -24,30 +24,25 @@
     24                                  global _start
     25                                  _start:
     26                                  
-    27                                                                          ; fib(n) will recurse n times
-    28 00000000 8A0D(00000000)              mov     cl, [n]
-    29 00000006 88CA                        mov     dl, cl                      ; Copy cl to dl, which will be used for calling fib(n) recursively
+    27 00000000 B800000000                  mov     eax, 0                      ; eax will contain the (latest - 1) Fibonacci number
+    28 00000005 BB01000000                  mov     ebx, 1                      ; ebx will contain the latest Fibonacci number
+    29 0000000A B901000000                  mov     ecx, 1                      ; ecx will be used for looping. It also marks the currently iterated Fibonacci number
     30                                  
-    31                                  fib:                                    ; fib(n) function
+    31                                  fibLoop:
     32                                  
-    33 00000008 FECA                        dec     dl
-    34 0000000A 80FA01                      cmp     dl, 1
-    35 0000000D 740A                        je      base
-    36 0000000F 75F7                        jne     fib
-    37                                  
-    38                                  fibLoopback:
-    39                                  
-    40 00000011 88CA                        mov     dl, cl
-    41 00000013 FECA                        dec     dl                          ; Reset dl
-    42 00000015 E2F1                        loop    fib
-    43 00000017 EB09                        jmp     exit
+    33 0000000F 3B0D(00000000)              cmp     ecx, [n]
+    34 00000015 740A                        je      result
+    35 00000017 89DA                        mov     edx, ebx                    ; edx contains the old ebx value (so we can assign it to eax)
+    36 00000019 01C3                        add     ebx, eax
+    37 0000001B FFC1                        inc     ecx
+    38 0000001D 89D0                        mov     eax, edx
+    39 0000001F EBEE                        jmp     fibLoop
+    40                                  
+    41                                  result:
+    42                                  
+    43 00000021 891D(01000000)              mov     [fibnum], ebx
     44                                  
-    45                                  base:                                   ; Base case
-    46                                  
-    47 00000019 8305(01000000)01            add     dword [fibnum], 1
-    48 00000020 EBEF                        jmp     fibLoopback
-    49                                  
-    50                                  exit:
-    51 00000022 B801000002                  mov     rax, SYS_exit
-    52 00000027 BF00000000                  mov     rdi, SUCCESS
-    53 0000002C 0F05                        syscall
+    45                                  exit:
+    46 00000027 B801000002                  mov     rax, SYS_exit
+    47 0000002C BF00000000                  mov     rdi, SUCCESS
+    48 00000031 0F05                        syscall

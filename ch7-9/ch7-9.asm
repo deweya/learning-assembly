@@ -15,7 +15,7 @@ SUCCESS     equ     0
 SYS_exit    equ     0x2000001
 
 ; Variables
-n           db      5                   ; Argument to fib(n)
+n           db      10                  ; Argument to fib(n)
 fibnum      dd      0                   ; The nth Fibonacci number
 
 ; *********************
@@ -24,28 +24,23 @@ section     .text
 global _start
 _start:
 
-                                        ; fib(n) will recurse n times
-    mov     cl, [n]
-    mov     dl, cl                      ; Copy cl to dl, which will be used for calling fib(n) recursively
+    mov     eax, 0                      ; eax will contain the (latest - 1) Fibonacci number
+    mov     ebx, 1                      ; ebx will contain the latest Fibonacci number
+    mov     ecx, 1                      ; ecx will be used for looping. It also marks the currently iterated Fibonacci number
 
-fib:                                    ; fib(n) function
+fibLoop:
 
-    dec     dl
-    cmp     dl, 1
-    je      base
-    jne     fib
+    cmp     ecx, [n]
+    je      result
+    mov     edx, ebx                    ; edx contains the old ebx value (so we can assign it to eax)
+    add     ebx, eax
+    inc     ecx
+    mov     eax, edx                    ; Assign eax to the old edx value
+    jmp     fibLoop
 
-fibLoopback:
+result:
 
-    mov     dl, cl
-    dec     dl                          ; Reset dl
-    loop    fib
-    jmp     exit
-
-base:                                   ; Base case
-
-    add     dword [fibnum], 1
-    jmp     fibLoopback
+    mov     [fibnum], ebx               ; Assign fibnum to the latest fibonacci number
 
 exit:
     mov     rax, SYS_exit
