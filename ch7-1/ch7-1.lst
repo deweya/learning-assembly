@@ -71,12 +71,24 @@
     71 00000042 8805(03000000)              mov     [bAns6], al
     72                                  
     73                                  ; -----
-    74                                  
-    75                                  multiply:
-    76                                  
-    77                                  divide:
-    78                                  
-    79                                  last:
-    80 00000048 B801000002                  mov     rax, SYS_exit
-    81 0000004D BF00000000                  mov     rdi, SUCCESS
-    82 00000052 0F05                        syscall
+    74                                  ; bAns7 = bNum1 - bNum3
+    75                                  
+    76 00000048 8A05(06000000)              mov     al, [bNum1]
+    77 0000004E 2A05(08000000)              sub     al, [bNum3]
+    78 00000054 8805(04000000)              mov     [bAns7], al
+    79                                  
+    80                                  ; -----
+    81                                  ; bAns8 = bNum2 - bNum4
+    82                                  
+    83 0000005A 8A05(07000000)              mov     al, [bNum2]
+    84 00000060 2A05(09000000)              sub     al, [bNum4]
+    85 00000066 8805(05000000)              mov     [bAns8], al
+    86                                  
+    87                                  multiply:
+    88                                  
+    89                                  divide:
+    90                                  
+    91                                  last:
+    92 0000006C B801000002                  mov     rax, SYS_exit
+    93 00000071 BF00000000                  mov     rdi, SUCCESS
+    94 00000076 0F05                        syscall

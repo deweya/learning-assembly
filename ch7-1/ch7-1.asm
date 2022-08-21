@@ -71,6 +71,18 @@ subtract:
     mov     [bAns6], al
 
 ; -----
+; bAns7 = bNum1 - bNum3
+
+    mov     al, [bNum1]
+    sub     al, [bNum3]
+    mov     [bAns7], al
+
+; -----
+; bAns8 = bNum2 - bNum4
+
+    mov     al, [bNum2]
+    sub     al, [bNum4]
+    mov     [bAns8], al
 
 multiply:
 
