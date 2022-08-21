@@ -41,11 +41,11 @@
     41 0000000F 00                      bRem18      db      0
     42                                  
     43                                  ; Operands
-    44 00000010 05                      bNum1       db      5
+    44 00000010 32                      bNum1       db      50
     45 00000011 0A                      bNum2       db      10
-    46 00000012 0F                      bNum3       db      15
+    46 00000012 1E                      bNum3       db      30
     47 00000013 14                      bNum4       db      20
-    48 00000014 6400                    wNum1       dw      100
+    48 00000014 6900                    wNum1       dw      105
     49                                  
     50                                  ; *************************
     51                                  
@@ -130,7 +130,12 @@
    130                                  ; -----
    131                                  ; bAns16 = bNum1 / bNum2
    132                                  
-   133                                  last:
-   134 000000B1 B801000002                  mov     rax, SYS_exit
-   135 000000B6 BF00000000                  mov     rdi, SUCCESS
-   136 000000BB 0F05                        syscall
+   133 000000B1 66B80000                    mov     ax, 0
+   134 000000B5 8A05(10000000)              mov     al, [bNum1]
+   135 000000BB F635(11000000)              div     byte [bNum2]
+   136 000000C1 8805(0C000000)              mov     [bAns16], al
+   137                                  
+   138                                  last:
+   139 000000C7 B801000002                  mov     rax, SYS_exit
+   140 000000CC BF00000000                  mov     rdi, SUCCESS
+   141 000000D1 0F05                        syscall

@@ -41,11 +41,11 @@ bAns18      db      0
 bRem18      db      0
 
 ; Operands
-bNum1       db      5
+bNum1       db      50
 bNum2       db      10
-bNum3       db      15
+bNum3       db      30
 bNum4       db      20
-wNum1       dw      100
+wNum1       dw      105
 
 ; *************************
 
@@ -129,6 +129,11 @@ divide:
 
 ; -----
 ; bAns16 = bNum1 / bNum2
+
+    mov     ax, 0
+    mov     al, [bNum1]
+    div     byte [bNum2]
+    mov     [bAns16], al
 
 last:
     mov     rax, SYS_exit
