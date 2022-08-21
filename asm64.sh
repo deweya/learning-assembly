@@ -1,6 +1,8 @@
 #!/bin/bash
 # Simple assemble/link script
 
+set -e
+
 if [ -z $1 ]; then
     echo "Usage: ./asm64 <asmMinFile> (no extension)"
 fi
