@@ -10,7 +10,6 @@ section     .data
 
 ; Define constants
 SUCCESS     equ     0           ; Successful operation
-ERROR       equ     1           ; Failed operation
 SYS_exit    equ     0x2000001   ; Call code for _exit
 
 ; Define data
