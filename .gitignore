@@ -1,2 +1,2 @@
-sum-of-squares
-sum-of-squares.o
+**/*.o
+bin/
