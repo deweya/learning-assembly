@@ -1,0 +1,48 @@
+     1                                  ; Chapter 7, exercise 1
+     2                                  ; Unsigned arithmetic
+     3                                  ;
+     4                                  ; bAns1 = bNum1 + bNum2
+     5                                  ; bAns2 = bNum1 + bNum3
+     6                                  ; bAns3 = bNum3 + bNum4
+     7                                  
+     8                                  DEFAULT REL
+     9                                  
+    10                                  ; *************************
+    11                                  
+    12                                  section     .data
+    13                                  
+    14                                  ; Constants
+    15                                  SUCCESS     equ     0
+    16                                  SYS_exit    equ     0x2000001
+    17                                  
+    18                                  ; Answers
+    19 00000000 00                      bAns1       db      0
+    20 00000001 00                      bAns2       db      0
+    21 00000002 00                      bAns3       db      0
+    22                                  
+    23                                  ; Operands
+    24 00000003 05                      bNum1       db      5
+    25 00000004 0A                      bNum2       db      10
+    26 00000005 0F                      bNum3       db      15
+    27 00000006 14                      bNum4       db      20
+    28                                  
+    29                                  ; *************************
+    30                                  
+    31                                  section     .text
+    32                                  global _start
+    33                                  _start:
+    34                                  
+    35                                  ; -----
+    36                                  ; bAns1 = bNum1 + bNum2
+    37                                  
+    38 00000000 B800000000                  mov     rax, 0
+    39 00000005 480305(03000000)            add     rax, [bNum1]
+    40 0000000C 480305(04000000)            add     rax, [bNum2]
+    41 00000013 488905(00000000)            mov     [bAns1], rax
+    42                                  
+    43                                  ; -----
+    44                                  
+    45                                  last:
+    46 0000001A B801000002                  mov     rax, SYS_exit
+    47 0000001F BF00000000                  mov     rdi, SUCCESS
+    48 00000024 0F05                        syscall
