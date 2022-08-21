@@ -4,6 +4,9 @@
 ; bAns1 = bNum1 + bNum2
 ; bAns2 = bNum1 + bNum3
 ; bAns3 = bNum3 + bNum4
+; bAns6 = bNum1 - bNum2
+; bAns7 = bNum1 - bNum3
+; bAns8 = bNum2 - bNum4
 
 DEFAULT REL
 
@@ -19,6 +22,9 @@ SYS_exit    equ     0x2000001
 bAns1       db      0
 bAns2       db      0
 bAns3       db      0
+bAns6       db      0
+bAns7       db      0
+bAns8       db      0
 
 ; Operands
 bNum1       db      5
@@ -56,6 +62,15 @@ add:
     mov     [bAns3], al
 
 subtract:
+
+; -----
+; bAns6 = bNum1 - bNum2
+
+    mov     al, [bNum1]
+    sub     al, [bNum2]
+    mov     [bAns6], al
+
+; -----
 
 multiply:
 
