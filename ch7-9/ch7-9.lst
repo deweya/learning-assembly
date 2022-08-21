@@ -15,7 +15,7 @@
     15                                  SYS_exit    equ     0x2000001
     16                                  
     17                                  ; Variables
-    18 00000000 05                      n           db      5                  ; Argument to fib(n)
+    18 00000000 05                      n           db      5                   ; Argument to fib(n)
     19 00000001 00000000                fibnum      dd      0                   ; The nth Fibonacci number
     20                                  
     21                                  ; *********************
