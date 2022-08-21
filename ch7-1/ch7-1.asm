@@ -10,6 +10,10 @@
 ; wAns11 = bNum1 * bNum3
 ; wAns12 = bNum2 * bNum2
 ; wAns13 = bNum2 * bNum4
+; bAns16 = bNum1 / bNum2
+; bAns17 = bNum3 / bNum4
+; bAns18 = wNum1 / bNum4
+; bRem18 = wNum1 % bNum4
 
 DEFAULT REL
 
@@ -31,12 +35,17 @@ bAns8       db      0
 wAns11      dw      0
 wAns12      dw      0
 wAns13      dw      0
+bAns16      db      0
+bAns17      db      0
+bAns18      db      0
+bRem18      db      0
 
 ; Operands
 bNum1       db      5
 bNum2       db      10
 bNum3       db      15
 bNum4       db      20
+wNum1       dw      100
 
 ; *************************
 
@@ -97,7 +106,7 @@ multiply:
 
     mov     ax, 0                   ; Need to zero out entire word
     mov     al, [bNum1]
-    imul    byte [bNum3]
+    mul     byte [bNum3]
     mov     [wAns11], ax
 
 ; -----
@@ -105,7 +114,7 @@ multiply:
 
     mov     ax, 0
     mov     al, [bNum2]
-    imul    byte [bNum2]
+    mul     byte [bNum2]
     mov     [wAns12], ax
 
 ; -----
@@ -113,10 +122,13 @@ multiply:
 
     mov     ax, 0
     mov     al, [bNum2]
-    imul    byte [bNum4]
+    mul     byte [bNum4]
     mov     [wAns13], ax
 
 divide:
+
+; -----
+; bAns16 = bNum1 / bNum2
 
 last:
     mov     rax, SYS_exit
