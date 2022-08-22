@@ -1,0 +1,44 @@
+     1                                  ; Chapter 8, exercise 1
+     2                                  ; Sum a list of numbers
+     3                                  
+     4                                  DEFAULT REL
+     5                                  
+     6                                  ; ***************************
+     7                                  
+     8                                  section     .data
+     9                                  
+    10                                  ; Constants
+    11                                  SUCCESS     equ     0
+    12                                  SYS_exit    equ     0x2000001
+    13                                  
+    14                                  ; Variables
+    15 00000000 0102030405              nums        db      1,  2,  3,  4,  5
+    16 00000005 060708090A                          db      6,  7,  8,  9,  10
+    17 0000000A 0B0C0D0E0F                          db      11, 12, 13, 14, 15
+    18 0000000F 1011121314                          db      16, 17, 18, 19, 20
+    19                                  
+    20 00000014 14                      len         db      20
+    21 00000015 0000                    sum         dw      0
+    22                                  
+    23                                  ; ***************************
+    24                                  
+    25                                  section     .text
+    26                                  global _start
+    27                                  _start:
+    28                                  
+    29 00000000 8A0D(14000000)              mov     cl, [len]                       ; loop "len" number of times
+    30 00000006 B800000000                  mov     rax, 0                          ; rax is our displacement
+    31 0000000B 488D35(00000000)            lea     rsi, [nums]                     ; rsi contains the base address of nums
+    32                                                                              ;   this is needed to avoid the "Mach-O 64-bit format does not support 32-bit absolute addresses" error
+    33                                  
+    34                                  sumLoop:
+    35                                  
+    36 00000012 8A1C06                      mov     bl, byte [rsi+rax]
+    37 00000015 001D(15000000)              add     [sum], bl
+    38 0000001B 48FFC0                      inc     rax
+    39 0000001E E2F2                        loop    sumLoop
+    40                                  
+    41                                  exit:
+    42 00000020 B801000002                  mov     rax, SYS_exit
+    43 00000025 BF00000000                  mov     rdi, SUCCESS
+    44 0000002A 0F05                        syscall
