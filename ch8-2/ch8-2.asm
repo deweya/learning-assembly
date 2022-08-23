@@ -1,5 +1,6 @@
-; Chapter 8, exercise 1
+; Chapter 8, exercise 2
 ; Sum a list of numbers
+; Also, get the min, max, and average of the list of numbers
 
 DEFAULT REL
 
