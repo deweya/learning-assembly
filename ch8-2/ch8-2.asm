@@ -18,8 +18,13 @@ nums        db      1,  5,  20,  4,  100
 len         db      10
 sum         dw      0
 max         db      0
-min         db      0
 avg         dw      0
+
+; ***************************
+
+section     .bss
+
+min         resb    1
 
 ; ***************************
 

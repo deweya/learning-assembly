@@ -18,55 +18,60 @@
     18 0000000A 0A                      len         db      10
     19 0000000B 0000                    sum         dw      0
     20 0000000D 00                      max         db      0
-    21 0000000E 00                      min         db      0
-    22 0000000F 0000                    avg         dw      0
-    23                                  
-    24                                  ; ***************************
-    25                                  
-    26                                  section     .text
-    27                                  global _start
-    28                                  _start:
-    29                                  
-    30 00000000 8A0D(0A000000)              mov     cl, [len]                       ; loop "len" number of times
-    31 00000006 B800000000                  mov     rax, 0                          ; rax is our displacement
-    32 0000000B 488D35(00000000)            lea     rsi, [nums]                     ; rsi contains the base address of nums
-    33                                                                              ;   this is needed to avoid the "Mach-O 64-bit format does not support 32-bit absolute addresses" error
-    34                                      
-    35 00000012 8A1E                        mov     bl, byte [rsi]                  ; Set min to the first element of nums
-    36 00000014 881D(0E000000)              mov     [min], bl
-    37                                  
-    38                                  loopStart:
-    39                                  
-    40 0000001A 8A1C06                      mov     bl, byte [rsi+rax]              ; Calculate sum
-    41 0000001D 001D(0B000000)              add     [sum], bl
+    21 0000000E 0000                    avg         dw      0
+    22                                  
+    23                                  ; ***************************
+    24                                  
+    25                                  section     .bss
+    26                                  
+    27 00000000 ??                      min         resb    1
+    28                                  
+    29                                  ; ***************************
+    30                                  
+    31                                  section     .text
+    32                                  global _start
+    33                                  _start:
+    34                                  
+    35 00000000 8A0D(0A000000)              mov     cl, [len]                       ; loop "len" number of times
+    36 00000006 B800000000                  mov     rax, 0                          ; rax is our displacement
+    37 0000000B 488D35(00000000)            lea     rsi, [nums]                     ; rsi contains the base address of nums
+    38                                                                              ;   this is needed to avoid the "Mach-O 64-bit format does not support 32-bit absolute addresses" error
+    39                                      
+    40 00000012 8A1E                        mov     bl, byte [rsi]                  ; Set min to the first element of nums
+    41 00000014 881D(00000000)              mov     [min], bl
     42                                  
-    43                                  checkMax:
+    43                                  loopStart:
     44                                  
-    45 00000023 3A1D(0D000000)              cmp     bl, [max]
-    46 00000029 7F0F                        jg      setMax
+    45 0000001A 8A1C06                      mov     bl, byte [rsi+rax]              ; Calculate sum
+    46 0000001D 001D(0B000000)              add     [sum], bl
     47                                  
-    48                                  checkMin:
+    48                                  checkMax:
     49                                  
-    50 0000002B 3A1D(0E000000)              cmp     bl, [min]
-    51 00000031 7C0F                        jl      setMin
+    50 00000023 3A1D(0D000000)              cmp     bl, [max]
+    51 00000029 7F0F                        jg      setMax
     52                                  
-    53                                  loopEnd:
+    53                                  checkMin:
     54                                  
-    55 00000033 48FFC0                      inc     rax                             ; Increment displacement
-    56 00000036 E2E2                        loop    loopStart
-    57 00000038 EB10                        jmp     exit
-    58                                  
-    59                                  setMax:
-    60                                  
-    61 0000003A 881D(0D000000)              mov     [max], bl
-    62 00000040 EBE9                        jmp     checkMin
+    55 0000002B 3A1D(00000000)              cmp     bl, [min]
+    56 00000031 7C0F                        jl      setMin
+    57                                  
+    58                                  loopEnd:
+    59                                  
+    60 00000033 48FFC0                      inc     rax                             ; Increment displacement
+    61 00000036 E2E2                        loop    loopStart
+    62 00000038 EB10                        jmp     exit
     63                                  
-    64                                  setMin:
+    64                                  setMax:
     65                                  
-    66 00000042 881D(0E000000)              mov     [min], bl
-    67 00000048 EBE9                        jmp     loopEnd
+    66 0000003A 881D(0D000000)              mov     [max], bl
+    67 00000040 EBE9                        jmp     checkMin
     68                                  
-    69                                  exit:
-    70 0000004A B801000002                  mov     rax, SYS_exit
-    71 0000004F BF00000000                  mov     rdi, SUCCESS
-    72 00000054 0F05                        syscall
+    69                                  setMin:
+    70                                  
+    71 00000042 881D(00000000)              mov     [min], bl
+    72 00000048 EBE9                        jmp     loopEnd
+    73                                  
+    74                                  exit:
+    75 0000004A B801000002                  mov     rax, SYS_exit
+    76 0000004F BF00000000                  mov     rdi, SUCCESS
+    77 00000054 0F05                        syscall
