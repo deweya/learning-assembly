@@ -31,24 +31,40 @@ _start:
     mov     rax, 0                          ; rax is our displacement
     lea     rsi, [nums]                     ; rsi contains the base address of nums
                                             ;   this is needed to avoid the "Mach-O 64-bit format does not support 32-bit absolute addresses" error
+    
+    mov     bl, byte [rsi]                  ; Set min to the first element of nums
+    mov     [min], bl
 
-numLoop:
+loopStart:
 
     mov     bl, byte [rsi+rax]              ; Calculate sum
     add     [sum], bl
-    cmp     bl, [max]                       ; Check if this is the largest number
+
+checkMax:
+
+    cmp     bl, [max]
     jg      setMax
 
-return:
+checkMin:
+
+    cmp     bl, [min]
+    jl      setMin
+
+loopEnd:
 
     inc     rax                             ; Increment displacement
-    loop    numLoop
+    loop    loopStart
     jmp     exit
 
 setMax:
 
     mov     [max], bl
-    jmp     return
+    jmp     checkMin
+
+setMin:
+
+    mov     [min], bl
+    jmp     loopEnd
 
 exit:
     mov     rax, SYS_exit

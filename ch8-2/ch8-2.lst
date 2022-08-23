@@ -31,26 +31,42 @@
     31 00000006 B800000000                  mov     rax, 0                          ; rax is our displacement
     32 0000000B 488D35(00000000)            lea     rsi, [nums]                     ; rsi contains the base address of nums
     33                                                                              ;   this is needed to avoid the "Mach-O 64-bit format does not support 32-bit absolute addresses" error
-    34                                  
-    35                                  numLoop:
-    36                                  
-    37 00000012 8A1C06                      mov     bl, byte [rsi+rax]              ; Calculate sum
-    38 00000015 001D(0B000000)              add     byte [sum], bl
-    39 0000001B 3A1D(0D000000)              cmp     bl, [max]                       ; Check if this is the largest number
-    40 00000021 7F07                        jg      setMax
-    41                                  
-    42                                  return:
-    43                                  
-    44 00000023 48FFC0                      inc     rax                             ; Increment displacement
-    45 00000026 E2EA                        loop    numLoop
-    46 00000028 EB08                        jmp     exit
+    34                                      
+    35 00000012 8A1E                        mov     bl, byte [rsi]                  ; Set min to the first element of nums
+    36 00000014 881D(0E000000)              mov     [min], bl
+    37                                  
+    38                                  loopStart:
+    39                                  
+    40 0000001A 8A1C06                      mov     bl, byte [rsi+rax]              ; Calculate sum
+    41 0000001D 001D(0B000000)              add     [sum], bl
+    42                                  
+    43                                  checkMax:
+    44                                  
+    45 00000023 3A1D(0D000000)              cmp     bl, [max]
+    46 00000029 7F0F                        jg      setMax
     47                                  
-    48                                  setMax:
+    48                                  checkMin:
     49                                  
-    50 0000002A 881D(0D000000)              mov     [max], bl
-    51 00000030 EBF1                        jmp     return
+    50 0000002B 3A1D(0E000000)              cmp     bl, [min]
+    51 00000031 7C0F                        jl      setMin
     52                                  
-    53                                  exit:
-    54 00000032 B801000002                  mov     rax, SYS_exit
-    55 00000037 BF00000000                  mov     rdi, SUCCESS
-    56 0000003C 0F05                        syscall
+    53                                  loopEnd:
+    54                                  
+    55 00000033 48FFC0                      inc     rax                             ; Increment displacement
+    56 00000036 E2E2                        loop    loopStart
+    57 00000038 EB10                        jmp     exit
+    58                                  
+    59                                  setMax:
+    60                                  
+    61 0000003A 881D(0D000000)              mov     [max], bl
+    62 00000040 EBE9                        jmp     checkMin
+    63                                  
+    64                                  setMin:
+    65                                  
+    66 00000042 881D(0E000000)              mov     [min], bl
+    67 00000048 EBE9                        jmp     loopEnd
+    68                                  
+    69                                  exit:
+    70 0000004A B801000002                  mov     rax, SYS_exit
+    71 0000004F BF00000000                  mov     rdi, SUCCESS
+    72 00000054 0F05                        syscall
