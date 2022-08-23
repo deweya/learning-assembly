@@ -60,7 +60,7 @@ loopEnd:
 
     inc     rax                             ; Increment displacement
     loop    loopStart
-    jmp     exit
+    jmp     setAvg
 
 setMax:
 
@@ -71,6 +71,12 @@ setMin:
 
     mov     [min], bl
     jmp     loopEnd
+
+setAvg:
+
+    mov     ax, [sum]
+    div     byte [len]
+    mov     [avg], al
 
 exit:
     mov     rax, SYS_exit
