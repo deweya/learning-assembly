@@ -58,13 +58,37 @@ h           dd      14145, 11134, 15123, 15123, 14123           ; List of h (hei
             dd      11134, 14134, 14576, 15457, 17142
             dd      13153, 11153, 12184, 14142, 17134
 
+num         db      50                                          ; Number of square pyramids
 sa          dd      0                                           ; Sum of all surface areas
+w2          dw      2
 
 ; ***************************
 
 section     .text
 global _start
 _start:
+
+    mov     cl, [num]                   ; Initialize loop counter register
+    lea     r8, [a]                     ; Initialize displacements
+    lea     r9, [l]
+    lea     r10, [h]
+    mov     r11, 0                      ; r11 is our register index
+
+loopStart:
+
+                                        ; * totalSurfaceArea(n) = a(n)^2 + 2*a(n)*l(n)
+    movzx   eax, byte [r8 + r11*1]      ; Load a(n)
+    mov     ebx, eax                    ; Pass the same thing into bl
+    mul     eax                         ; a(n)^2
+    mov     ecx, eax                    ; Load a(n)^2 to cx
+    movzx   eax, word [r9 + r11*2]      ; Load l(n)
+    mul     ebx                         ; 2*a(n)*l(n) + a(n)^2
+    mul     word [w2]
+    add     eax, ecx
+    add     [sa], eax                   ; sa += totalSurfaceArea(n)
+    inc     r11
+
+    loop    loopStart
 
 exit:
     mov     rax, SYS_exit
