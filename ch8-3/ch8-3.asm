@@ -147,6 +147,16 @@ checkMaxSa:
 
     cmp     [maxSa], eax                ; if maxSa < totalSurfaceArea(n)
     jl      setMaxSa
+
+checkMinVol:
+
+    cmp     [minVol], ebx               ; if minVol > volume(n)
+    jg      setMinVol
+
+checkMaxVol:
+
+    cmp     [maxVol], ebx               ; if maxVol < volume(n)
+    jl      setMaxVol
     jmp     statsEnd
 
 setMinSa:
@@ -157,6 +167,16 @@ setMinSa:
 setMaxSa:
 
     mov     [maxSa], eax
+    jmp     checkMinVol
+
+setMinVol:
+
+    mov     [minVol], ebx
+    jmp     checkMaxVol
+
+setMaxVol:
+
+    mov     [maxVol], ebx
 
 statsEnd:
 
