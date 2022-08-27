@@ -89,8 +89,8 @@
     59 0000015C 0000               
     60                                  
     61 0000015E 32                      num         db      50                                          ; Number of square pyramids
-    62 0000015F 00000000                sa          dd      0                                           ; Sum of all surface areas
-    63 00000163 00000000                vol         dd      0                                           ; Sum of all volumes
+    62 0000015F 00000000                totalSa     dd      0                                           ; Sum of all surface areas
+    63 00000163 00000000                totalVol    dd      0                                           ; Sum of all volumes
     64 00000167 0200                    w2          dw      2
     65 00000169 03000000                d3          dd      3
     66                                  
@@ -117,7 +117,7 @@
     87 00000032 F7E3                        mul     ebx                         ; 2*a(n)*l(n) + a(n)^2
     88 00000034 66F725(67010000)            mul     word [w2]
     89 0000003B 4401E0                      add     eax, r12d
-    90 0000003E 0105(5F010000)              add     [sa], eax                   ; sa += totalSurfaceArea(n)
+    90 0000003E 0105(5F010000)              add     [totalSa], eax              ; totalSa += totalSurfaceArea(n)
     91 00000044 49FFC3                      inc     r11
     92 00000047 E2D8                        loop    totalSurfaceArea
     93 00000049 8A0D(5E010000)              mov     cl, [num]                   ; Reset counters
@@ -130,7 +130,7 @@
    100 0000005C 438B1C9A                    mov     ebx, [r10 + r11*4]          ; Load h(n)
    101 00000060 F7E3                        mul     ebx                         ; a(n)^2 * h(n)
    102 00000062 F735(69010000)              div     dword [d3]                  ; (a(n)^2 * h(n)) / 3
-   103 00000068 0105(63010000)              add     [vol], eax                  ; vol += volume(n)
+   103 00000068 0105(63010000)              add     [totalVol], eax             ; totalVol += volume(n)
    104 0000006E 49FFC3                      inc     r11
    105 00000071 E2E2                        loop    totalVolume
    106                                  
