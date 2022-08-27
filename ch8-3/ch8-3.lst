@@ -124,58 +124,69 @@
     94 00000022 4C8D35(C8000000)            lea     r14, [tVolArr]
     95 00000029 41BB00000000                mov     r11, 0                      ; r11 is our register index
     96                                  
-    97                                  totalSurfaceArea:
-    98                                  
-    99                                                                          ; * totalSurfaceArea(n) = a(n)^2 + 2*a(n)*l(n)
-   100 0000002F 430FB60418                  movzx   eax, byte [r8 + r11*1]      ; Load a(n)
-   101 00000034 89C3                        mov     ebx, eax                    ; Pass the same thing into bl
-   102 00000036 F7E0                        mul     eax                         ; a(n)^2
-   103 00000038 4189C4                      mov     r12d, eax                   ; Load a(n)^2 to r12
-   104 0000003B 430FB70459                  movzx   eax, word [r9 + r11*2]      ; Load l(n)
-   105 00000040 F7E3                        mul     ebx                         ; 2*a(n)*l(n) + a(n)^2
-   106 00000042 66F725(7F010000)            mul     word [w2]
-   107 00000049 4401E0                      add     eax, r12d
-   108 0000004C 4389449D00                  mov     [r13 + r11*4], eax          ; Move totalSurfaceArea(n) to total surface area array
-   109 00000051 0105(5F010000)              add     [tSa], eax                  ; tSa += totalSurfaceArea(n)
-   110 00000057 49FFC3                      inc     r11
-   111 0000005A E2D3                        loop    totalSurfaceArea
-   112 0000005C 8A0D(5E010000)              mov     cl, [num]                   ; Reset counters
-   113 00000062 41BB00000000                mov     r11, 0
-   114                                  
-   115                                  totalVolume:
-   116                                                                          ; * volume(n) = (a(n)^2 * h(n)) / 3
-   117 00000068 430FB60418                  movzx   eax, byte [r8 + r11*1]      ; Load a(n)
-   118 0000006D F7E0                        mul     eax                         ; a(n)^2
-   119 0000006F 438B1C9A                    mov     ebx, [r10 + r11*4]          ; Load h(n)
-   120 00000073 F7E3                        mul     ebx                         ; a(n)^2 * h(n)
-   121 00000075 F735(81010000)              div     dword [d3]                  ; (a(n)^2 * h(n)) / 3
-   122 0000007B 4389049E                    mov     [r14 + r11*4], eax          ; Move volume(n) to total volume array
-   123 0000007F 0105(6F010000)              add     [tVol], eax                 ; tVol += volume(n)
-   124 00000085 49FFC3                      inc     r11
-   125 00000088 E2DE                        loop    totalVolume
-   126 0000008A 8A0D(5E010000)              mov     cl, [num]                   ; Reset counters
-   127 00000090 41BB00000000                mov     r11, 0
-   128                                  
-   129                                  statsStart:
-   130                                  
-   131 00000096 438B449D00                  mov     eax, [r13 + r11*4]          ; Move totalSurfaceArea(n) to eax
-   132 0000009B 8B1D(63010000)              mov     ebx, [minSa]
-   133 000000A1 39C3                        cmp     ebx, eax                    ; If minSa > totalSurfaceArea(n)
-   134 000000A3 7F0D                        jg      setMin
+    97                                  ; -----
+    98                                  ; Calculate totalSurfaceArea(n) and volume(n)
+    99                                  ; Add each index's total to a surface area and volume array
+   100                                  
+   101                                  totalSurfaceArea:
+   102                                  
+   103                                                                          ; * totalSurfaceArea(n) = a(n)^2 + 2*a(n)*l(n)
+   104 0000002F 430FB60418                  movzx   eax, byte [r8 + r11*1]      ; Load a(n)
+   105 00000034 89C3                        mov     ebx, eax                    ; Pass the same thing into bl
+   106 00000036 F7E0                        mul     eax                         ; a(n)^2
+   107 00000038 4189C4                      mov     r12d, eax                   ; Load a(n)^2 to r12
+   108 0000003B 430FB70459                  movzx   eax, word [r9 + r11*2]      ; Load l(n)
+   109 00000040 F7E3                        mul     ebx                         ; 2*a(n)*l(n) + a(n)^2
+   110 00000042 66F725(7F010000)            mul     word [w2]
+   111 00000049 4401E0                      add     eax, r12d
+   112 0000004C 4389449D00                  mov     [r13 + r11*4], eax          ; Move totalSurfaceArea(n) to total surface area array
+   113 00000051 0105(5F010000)              add     [tSa], eax                  ; tSa += totalSurfaceArea(n)
+   114 00000057 49FFC3                      inc     r11
+   115 0000005A E2D3                        loop    totalSurfaceArea
+   116 0000005C 8A0D(5E010000)              mov     cl, [num]                   ; Reset counters
+   117 00000062 41BB00000000                mov     r11, 0
+   118                                  
+   119                                  totalVolume:
+   120                                                                          ; * volume(n) = (a(n)^2 * h(n)) / 3
+   121 00000068 430FB60418                  movzx   eax, byte [r8 + r11*1]      ; Load a(n)
+   122 0000006D F7E0                        mul     eax                         ; a(n)^2
+   123 0000006F 438B1C9A                    mov     ebx, [r10 + r11*4]          ; Load h(n)
+   124 00000073 F7E3                        mul     ebx                         ; a(n)^2 * h(n)
+   125 00000075 F735(81010000)              div     dword [d3]                  ; (a(n)^2 * h(n)) / 3
+   126 0000007B 4389049E                    mov     [r14 + r11*4], eax          ; Move volume(n) to total volume array
+   127 0000007F 0105(6F010000)              add     [tVol], eax                 ; tVol += volume(n)
+   128 00000085 49FFC3                      inc     r11
+   129 00000088 E2DE                        loop    totalVolume
+   130 0000008A 8A0D(5E010000)              mov     cl, [num]                   ; Reset counters
+   131 00000090 41BB00000000                mov     r11, 0
+   132                                  
+   133                                  ; -----
+   134                                  ; Calculate min/max/average for totalSurfaceArea(n) and volume(n)
    135                                  
-   136                                  setMinReturn:
+   136                                  statsStart:
    137                                  
-   138 000000A5 891D(63010000)              mov     [minSa], ebx
-   139 000000AB 49FFC3                      inc     r11
-   140 000000AE E2E6                        loop    statsStart
-   141 000000B0 EB04                        jmp     exit
+   138 00000096 438B449D00                  mov     eax, [r13 + r11*4]          ; Move totalSurfaceArea(n) to eax
+   139 0000009B 438B1C9E                    mov     ebx, [r14 + r11*4]          ; Move volume(n) to ebx
+   140                                  
+   141                                  checkMinSa:
    142                                  
-   143                                  setMin:
-   144                                  
-   145 000000B2 89C3                        mov     ebx, eax
-   146 000000B4 EBEF                        jmp     setMinReturn
-   147                                  
-   148                                  exit:
-   149 000000B6 B801000002                  mov     rax, SYS_exit
-   150 000000BB BF00000000                  mov     rdi, SUCCESS
-   151 000000C0 0F05                        syscall
+   143 0000009F 3905(63010000)              cmp     [minSa], eax                ; if minSa > totalSurfaceArea(n)
+   144 000000A5 7F02                        jg      setMinSa
+   145 000000A7 EB06                        jmp     statsEnd
+   146                                  
+   147                                  setMinSa:
+   148                                  
+   149 000000A9 8905(63010000)              mov     [minSa], eax
+   150                                  
+   151                                  statsEnd:
+   152                                  
+   153 000000AF 49FFC3                      inc     r11
+   154 000000B2 E2E2                        loop    statsStart
+   155                                  
+   156                                  ; -----
+   157                                  ; Terminate the program
+   158                                  
+   159                                  exit:
+   160 000000B4 B801000002                  mov     rax, SYS_exit
+   161 000000B9 BF00000000                  mov     rdi, SUCCESS
+   162 000000BE 0F05                        syscall

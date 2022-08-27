@@ -94,6 +94,10 @@ _start:
     lea     r14, [tVolArr]
     mov     r11, 0                      ; r11 is our register index
 
+; -----
+; Calculate totalSurfaceArea(n) and volume(n)
+; Add each index's total to a surface area and volume array
+
 totalSurfaceArea:
 
                                         ; * totalSurfaceArea(n) = a(n)^2 + 2*a(n)*l(n)
@@ -126,24 +130,31 @@ totalVolume:
     mov     cl, [num]                   ; Reset counters
     mov     r11, 0
 
+; -----
+; Calculate min/max/average for totalSurfaceArea(n) and volume(n)
+
 statsStart:
 
     mov     eax, [r13 + r11*4]          ; Move totalSurfaceArea(n) to eax
-    mov     ebx, [minSa]
-    cmp     ebx, eax                    ; If minSa > totalSurfaceArea(n)
-    jg      setMin
+    mov     ebx, [r14 + r11*4]          ; Move volume(n) to ebx
 
-setMinReturn:
+checkMinSa:
 
-    mov     [minSa], ebx
+    cmp     [minSa], eax                ; if minSa > totalSurfaceArea(n)
+    jg      setMinSa
+    jmp     statsEnd
+
+setMinSa:
+
+    mov     [minSa], eax
+
+statsEnd:
+
     inc     r11
     loop    statsStart
-    jmp     exit
 
-setMin:
-
-    mov     ebx, eax
-    jmp     setMinReturn
+; -----
+; Terminate the program
 
 exit:
     mov     rax, SYS_exit
