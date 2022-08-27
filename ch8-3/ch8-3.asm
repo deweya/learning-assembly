@@ -142,11 +142,21 @@ checkMinSa:
 
     cmp     [minSa], eax                ; if minSa > totalSurfaceArea(n)
     jg      setMinSa
+
+checkMaxSa:
+
+    cmp     [maxSa], eax                ; if maxSa < totalSurfaceArea(n)
+    jl      setMaxSa
     jmp     statsEnd
 
 setMinSa:
 
     mov     [minSa], eax
+    jmp     checkMaxSa
+
+setMaxSa:
+
+    mov     [maxSa], eax
 
 statsEnd:
 

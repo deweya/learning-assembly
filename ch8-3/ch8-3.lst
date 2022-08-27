@@ -171,22 +171,32 @@
    141                                  checkMinSa:
    142                                  
    143 0000009F 3905(63010000)              cmp     [minSa], eax                ; if minSa > totalSurfaceArea(n)
-   144 000000A5 7F02                        jg      setMinSa
-   145 000000A7 EB06                        jmp     statsEnd
-   146                                  
-   147                                  setMinSa:
-   148                                  
-   149 000000A9 8905(63010000)              mov     [minSa], eax
-   150                                  
-   151                                  statsEnd:
-   152                                  
-   153 000000AF 49FFC3                      inc     r11
-   154 000000B2 E2E2                        loop    statsStart
-   155                                  
-   156                                  ; -----
-   157                                  ; Terminate the program
+   144 000000A5 7F0A                        jg      setMinSa
+   145                                  
+   146                                  checkMaxSa:
+   147                                  
+   148 000000A7 3905(67010000)              cmp     [maxSa], eax                ; if maxSa < totalSurfaceArea(n)
+   149 000000AD 7C0A                        jl      setMaxSa
+   150 000000AF EB0E                        jmp     statsEnd
+   151                                  
+   152                                  setMinSa:
+   153                                  
+   154 000000B1 8905(63010000)              mov     [minSa], eax
+   155 000000B7 EBEE                        jmp     checkMaxSa
+   156                                  
+   157                                  setMaxSa:
    158                                  
-   159                                  exit:
-   160 000000B4 B801000002                  mov     rax, SYS_exit
-   161 000000B9 BF00000000                  mov     rdi, SUCCESS
-   162 000000BE 0F05                        syscall
+   159 000000B9 8905(67010000)              mov     [maxSa], eax
+   160                                  
+   161                                  statsEnd:
+   162                                  
+   163 000000BF 49FFC3                      inc     r11
+   164 000000C2 E2D2                        loop    statsStart
+   165                                  
+   166                                  ; -----
+   167                                  ; Terminate the program
+   168                                  
+   169                                  exit:
+   170 000000C4 B801000002                  mov     rax, SYS_exit
+   171 000000C9 BF00000000                  mov     rdi, SUCCESS
+   172 000000CE 0F05                        syscall
