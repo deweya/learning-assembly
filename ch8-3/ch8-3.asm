@@ -68,8 +68,8 @@ d3          dd      3
 
 section     .bss
 
-tSaArr      resd    50
-tVolArr     resd    50
+tSaArr      resd    50                  ; Array of total surface areas
+tVolArr     resd    50                  ; Array of total volumes
 
 ; ***************************
 
@@ -81,6 +81,8 @@ _start:
     lea     r8, [a]                     ; Initialize displacements
     lea     r9, [l]
     lea     r10, [h]
+    lea     r13, [tSaArr]
+    lea     r14, [tVolArr]
     mov     r11, 0                      ; r11 is our register index
 
 totalSurfaceArea:
@@ -94,6 +96,7 @@ totalSurfaceArea:
     mul     ebx                         ; 2*a(n)*l(n) + a(n)^2
     mul     word [w2]
     add     eax, r12d
+    mov     [r13 + r11*4], eax          ; Move totalSurfaceArea(n) to total surface area array
     add     [tSa], eax                  ; tSa += totalSurfaceArea(n)
     inc     r11
     loop    totalSurfaceArea
