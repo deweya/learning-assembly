@@ -213,10 +213,17 @@
    183 000000DF 49FFC3                      inc     r11
    184 000000E2 E2B2                        loop    statsStart
    185                                  
-   186                                  ; -----
-   187                                  ; Terminate the program
-   188                                  
-   189                                  exit:
-   190 000000E4 B801000002                  mov     rax, SYS_exit
-   191 000000E9 BF00000000                  mov     rdi, SUCCESS
-   192 000000EE 0F05                        syscall
+   186                                  setAvgs:
+   187                                  
+   188 000000E4 8B05(5F010000)              mov     eax, [tSa]                  ; totalSurfaceArea(n) / number of pyramids
+   189 000000EA 0FB61D(5E010000)            movzx   ebx, byte [num]
+   190 000000F1 F7F3                        div     ebx
+   191 000000F3 8905(6B010000)              mov     [avgSa], eax
+   192                                  
+   193                                  ; -----
+   194                                  ; Terminate the program
+   195                                  
+   196                                  exit:
+   197 000000F9 B801000002                  mov     rax, SYS_exit
+   198 000000FE BF00000000                  mov     rdi, SUCCESS
+   199 00000103 0F05                        syscall

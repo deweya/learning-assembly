@@ -183,6 +183,13 @@ statsEnd:
     inc     r11
     loop    statsStart
 
+setAvgs:
+
+    mov     eax, [tSa]                  ; totalSurfaceArea(n) / number of pyramids
+    movzx   ebx, byte [num]
+    div     ebx
+    mov     [avgSa], eax
+
 ; -----
 ; Terminate the program
 
