@@ -183,12 +183,21 @@ statsEnd:
     inc     r11
     loop    statsStart
 
-setAvgs:
+initSetAvgs:
 
-    mov     eax, [tSa]                  ; totalSurfaceArea(n) / number of pyramids
     movzx   ebx, byte [num]
+
+setAvgSa:
+
+    mov     eax, [tSa]                  ; avgSa = totalSurfaceArea(n) / number of pyramids
     div     ebx
     mov     [avgSa], eax
+
+setAvgVol:
+
+    mov     eax, [tVol]                 ; avgVol = volume(n) / number of pyramids
+    div     ebx
+    mov     [avgVol], eax
 
 ; -----
 ; Terminate the program

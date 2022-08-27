@@ -213,17 +213,26 @@
    183 000000DF 49FFC3                      inc     r11
    184 000000E2 E2B2                        loop    statsStart
    185                                  
-   186                                  setAvgs:
+   186                                  initSetAvgs:
    187                                  
-   188 000000E4 8B05(5F010000)              mov     eax, [tSa]                  ; totalSurfaceArea(n) / number of pyramids
-   189 000000EA 0FB61D(5E010000)            movzx   ebx, byte [num]
-   190 000000F1 F7F3                        div     ebx
-   191 000000F3 8905(6B010000)              mov     [avgSa], eax
-   192                                  
-   193                                  ; -----
-   194                                  ; Terminate the program
+   188 000000E4 0FB61D(5E010000)            movzx   ebx, byte [num]
+   189                                  
+   190                                  setAvgSa:
+   191                                  
+   192 000000EB 8B05(5F010000)              mov     eax, [tSa]                  ; avgSa = totalSurfaceArea(n) / number of pyramids
+   193 000000F1 F7F3                        div     ebx
+   194 000000F3 8905(6B010000)              mov     [avgSa], eax
    195                                  
-   196                                  exit:
-   197 000000F9 B801000002                  mov     rax, SYS_exit
-   198 000000FE BF00000000                  mov     rdi, SUCCESS
-   199 00000103 0F05                        syscall
+   196                                  setAvgVol:
+   197                                  
+   198 000000F9 8B05(6F010000)              mov     eax, [tVol]                 ; avgVol = volume(n) / number of pyramids
+   199 000000FF F7F3                        div     ebx
+   200 00000101 8905(7B010000)              mov     [avgVol], eax
+   201                                  
+   202                                  ; -----
+   203                                  ; Terminate the program
+   204                                  
+   205                                  exit:
+   206 00000107 B801000002                  mov     rax, SYS_exit
+   207 0000010C BF00000000                  mov     rdi, SUCCESS
+   208 00000111 0F05                        syscall
