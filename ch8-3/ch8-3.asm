@@ -59,8 +59,17 @@ h           dd      14145, 11134, 15123, 15123, 14123           ; List of h (hei
             dd      13153, 11153, 12184, 14142, 17134
 
 num         db      50                                          ; Number of square pyramids
+
 tSa         dd      0                                           ; Sum of all surface areas
+minSa       dd      0x7fffffff                                  ; Min SA
+maxSa       dd      0                                           ; Max SA
+avgSa       dd      0                                           ; Avg SA
+
 tVol        dd      0                                           ; Sum of all volumes
+minVol      dd      0x7fffffff                                  ; Min Vol
+maxVol      dd      0                                           ; Max Vol
+avgVol      dd      0                                           ; Avg Vol
+
 w2          dw      2
 d3          dd      3
 
@@ -114,6 +123,27 @@ totalVolume:
     add     [tVol], eax                 ; tVol += volume(n)
     inc     r11
     loop    totalVolume
+    mov     cl, [num]                   ; Reset counters
+    mov     r11, 0
+
+statsStart:
+
+    mov     eax, [r13 + r11*4]          ; Move totalSurfaceArea(n) to eax
+    mov     ebx, [minSa]
+    cmp     ebx, eax                    ; If minSa > totalSurfaceArea(n)
+    jg      setMin
+
+setMinReturn:
+
+    mov     [minSa], ebx
+    inc     r11
+    loop    statsStart
+    jmp     exit
+
+setMin:
+
+    mov     ebx, eax
+    jmp     setMinReturn
 
 exit:
     mov     rax, SYS_exit
