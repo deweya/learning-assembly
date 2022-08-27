@@ -60,7 +60,9 @@ h           dd      14145, 11134, 15123, 15123, 14123           ; List of h (hei
 
 num         db      50                                          ; Number of square pyramids
 sa          dd      0                                           ; Sum of all surface areas
+vol         dd      0                                           ; Sum of all volumes
 w2          dw      2
+d3          dd      3
 
 ; ***************************
 
@@ -74,7 +76,7 @@ _start:
     lea     r10, [h]
     mov     r11, 0                      ; r11 is our register index
 
-loopStart:
+totalSurfaceArea:
 
                                         ; * totalSurfaceArea(n) = a(n)^2 + 2*a(n)*l(n)
     movzx   eax, byte [r8 + r11*1]      ; Load a(n)
@@ -87,8 +89,20 @@ loopStart:
     add     eax, r12d
     add     [sa], eax                   ; sa += totalSurfaceArea(n)
     inc     r11
+    loop    totalSurfaceArea
+    mov     cl, [num]                   ; Reset counters
+    mov     r11, 0
 
-    loop    loopStart
+totalVolume:
+                                        ; * volume(n) = (a(n)^2 * h(n)) / 3
+    movzx   eax, byte [r8 + r11*1]      ; Load a(n)
+    mul     eax                         ; a(n)^2
+    mov     ebx, [r10 + r11*4]          ; Load h(n)
+    mul     ebx                         ; a(n)^2 * h(n)
+    div     dword [d3]                  ; (a(n)^2 * h(n)) / 3
+    add     [vol], eax                  ; vol += volume(n)
+    inc     r11
+    loop    totalVolume
 
 exit:
     mov     rax, SYS_exit
