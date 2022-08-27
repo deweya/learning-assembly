@@ -140,11 +140,12 @@
    110 0000006F 438B1C9A                    mov     ebx, [r10 + r11*4]          ; Load h(n)
    111 00000073 F7E3                        mul     ebx                         ; a(n)^2 * h(n)
    112 00000075 F735(69010000)              div     dword [d3]                  ; (a(n)^2 * h(n)) / 3
-   113 0000007B 0105(63010000)              add     [tVol], eax                 ; tVol += volume(n)
-   114 00000081 49FFC3                      inc     r11
-   115 00000084 E2E2                        loop    totalVolume
-   116                                  
-   117                                  exit:
-   118 00000086 B801000002                  mov     rax, SYS_exit
-   119 0000008B BF00000000                  mov     rdi, SUCCESS
-   120 00000090 0F05                        syscall
+   113 0000007B 4389049E                    mov     [r14 + r11*4], eax          ; Move volume(n) to total volume array
+   114 0000007F 0105(63010000)              add     [tVol], eax                 ; tVol += volume(n)
+   115 00000085 49FFC3                      inc     r11
+   116 00000088 E2DE                        loop    totalVolume
+   117                                  
+   118                                  exit:
+   119 0000008A B801000002                  mov     rax, SYS_exit
+   120 0000008F BF00000000                  mov     rdi, SUCCESS
+   121 00000094 0F05                        syscall

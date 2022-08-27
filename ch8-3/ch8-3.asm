@@ -110,6 +110,7 @@ totalVolume:
     mov     ebx, [r10 + r11*4]          ; Load h(n)
     mul     ebx                         ; a(n)^2 * h(n)
     div     dword [d3]                  ; (a(n)^2 * h(n)) / 3
+    mov     [r14 + r11*4], eax          ; Move volume(n) to total volume array
     add     [tVol], eax                 ; tVol += volume(n)
     inc     r11
     loop    totalVolume
