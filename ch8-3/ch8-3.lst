@@ -89,52 +89,59 @@
     59 0000015C 0000               
     60                                  
     61 0000015E 32                      num         db      50                                          ; Number of square pyramids
-    62 0000015F 00000000                totalSa     dd      0                                           ; Sum of all surface areas
-    63 00000163 00000000                totalVol    dd      0                                           ; Sum of all volumes
+    62 0000015F 00000000                tSa         dd      0                                           ; Sum of all surface areas
+    63 00000163 00000000                tVol        dd      0                                           ; Sum of all volumes
     64 00000167 0200                    w2          dw      2
     65 00000169 03000000                d3          dd      3
     66                                  
     67                                  ; ***************************
     68                                  
-    69                                  section     .text
-    70                                  global _start
-    71                                  _start:
-    72                                  
-    73 00000000 8A0D(5E010000)              mov     cl, [num]                   ; Initialize loop counter register
-    74 00000006 4C8D05(00000000)            lea     r8, [a]                     ; Initialize displacements
-    75 0000000D 4C8D0D(32000000)            lea     r9, [l]
-    76 00000014 4C8D15(96000000)            lea     r10, [h]
-    77 0000001B 41BB00000000                mov     r11, 0                      ; r11 is our register index
-    78                                  
-    79                                  totalSurfaceArea:
-    80                                  
-    81                                                                          ; * totalSurfaceArea(n) = a(n)^2 + 2*a(n)*l(n)
-    82 00000021 430FB60418                  movzx   eax, byte [r8 + r11*1]      ; Load a(n)
-    83 00000026 89C3                        mov     ebx, eax                    ; Pass the same thing into bl
-    84 00000028 F7E0                        mul     eax                         ; a(n)^2
-    85 0000002A 4189C4                      mov     r12d, eax                   ; Load a(n)^2 to r12
-    86 0000002D 430FB70459                  movzx   eax, word [r9 + r11*2]      ; Load l(n)
-    87 00000032 F7E3                        mul     ebx                         ; 2*a(n)*l(n) + a(n)^2
-    88 00000034 66F725(67010000)            mul     word [w2]
-    89 0000003B 4401E0                      add     eax, r12d
-    90 0000003E 0105(5F010000)              add     [totalSa], eax              ; totalSa += totalSurfaceArea(n)
-    91 00000044 49FFC3                      inc     r11
-    92 00000047 E2D8                        loop    totalSurfaceArea
-    93 00000049 8A0D(5E010000)              mov     cl, [num]                   ; Reset counters
-    94 0000004F 41BB00000000                mov     r11, 0
-    95                                  
-    96                                  totalVolume:
-    97                                                                          ; * volume(n) = (a(n)^2 * h(n)) / 3
-    98 00000055 430FB60418                  movzx   eax, byte [r8 + r11*1]      ; Load a(n)
-    99 0000005A F7E0                        mul     eax                         ; a(n)^2
-   100 0000005C 438B1C9A                    mov     ebx, [r10 + r11*4]          ; Load h(n)
-   101 00000060 F7E3                        mul     ebx                         ; a(n)^2 * h(n)
-   102 00000062 F735(69010000)              div     dword [d3]                  ; (a(n)^2 * h(n)) / 3
-   103 00000068 0105(63010000)              add     [totalVol], eax             ; totalVol += volume(n)
-   104 0000006E 49FFC3                      inc     r11
-   105 00000071 E2E2                        loop    totalVolume
-   106                                  
-   107                                  exit:
-   108 00000073 B801000002                  mov     rax, SYS_exit
-   109 00000078 BF00000000                  mov     rdi, SUCCESS
-   110 0000007D 0F05                        syscall
+    69                                  section     .bss
+    70                                  
+    71 00000000 <res C8h>               tSaArr      resd    50
+    72 000000C8 <res C8h>               tVolArr     resd    50
+    73                                  
+    74                                  ; ***************************
+    75                                  
+    76                                  section     .text
+    77                                  global _start
+    78                                  _start:
+    79                                  
+    80 00000000 8A0D(5E010000)              mov     cl, [num]                   ; Initialize loop counter register
+    81 00000006 4C8D05(00000000)            lea     r8, [a]                     ; Initialize displacements
+    82 0000000D 4C8D0D(32000000)            lea     r9, [l]
+    83 00000014 4C8D15(96000000)            lea     r10, [h]
+    84 0000001B 41BB00000000                mov     r11, 0                      ; r11 is our register index
+    85                                  
+    86                                  totalSurfaceArea:
+    87                                  
+    88                                                                          ; * totalSurfaceArea(n) = a(n)^2 + 2*a(n)*l(n)
+    89 00000021 430FB60418                  movzx   eax, byte [r8 + r11*1]      ; Load a(n)
+    90 00000026 89C3                        mov     ebx, eax                    ; Pass the same thing into bl
+    91 00000028 F7E0                        mul     eax                         ; a(n)^2
+    92 0000002A 4189C4                      mov     r12d, eax                   ; Load a(n)^2 to r12
+    93 0000002D 430FB70459                  movzx   eax, word [r9 + r11*2]      ; Load l(n)
+    94 00000032 F7E3                        mul     ebx                         ; 2*a(n)*l(n) + a(n)^2
+    95 00000034 66F725(67010000)            mul     word [w2]
+    96 0000003B 4401E0                      add     eax, r12d
+    97 0000003E 0105(5F010000)              add     [tSa], eax                  ; tSa += totalSurfaceArea(n)
+    98 00000044 49FFC3                      inc     r11
+    99 00000047 E2D8                        loop    totalSurfaceArea
+   100 00000049 8A0D(5E010000)              mov     cl, [num]                   ; Reset counters
+   101 0000004F 41BB00000000                mov     r11, 0
+   102                                  
+   103                                  totalVolume:
+   104                                                                          ; * volume(n) = (a(n)^2 * h(n)) / 3
+   105 00000055 430FB60418                  movzx   eax, byte [r8 + r11*1]      ; Load a(n)
+   106 0000005A F7E0                        mul     eax                         ; a(n)^2
+   107 0000005C 438B1C9A                    mov     ebx, [r10 + r11*4]          ; Load h(n)
+   108 00000060 F7E3                        mul     ebx                         ; a(n)^2 * h(n)
+   109 00000062 F735(69010000)              div     dword [d3]                  ; (a(n)^2 * h(n)) / 3
+   110 00000068 0105(63010000)              add     [tVol], eax                 ; tVol += volume(n)
+   111 0000006E 49FFC3                      inc     r11
+   112 00000071 E2E2                        loop    totalVolume
+   113                                  
+   114                                  exit:
+   115 00000073 B801000002                  mov     rax, SYS_exit
+   116 00000078 BF00000000                  mov     rdi, SUCCESS
+   117 0000007D 0F05                        syscall

@@ -59,10 +59,17 @@ h           dd      14145, 11134, 15123, 15123, 14123           ; List of h (hei
             dd      13153, 11153, 12184, 14142, 17134
 
 num         db      50                                          ; Number of square pyramids
-totalSa     dd      0                                           ; Sum of all surface areas
-totalVol    dd      0                                           ; Sum of all volumes
+tSa         dd      0                                           ; Sum of all surface areas
+tVol        dd      0                                           ; Sum of all volumes
 w2          dw      2
 d3          dd      3
+
+; ***************************
+
+section     .bss
+
+tSaArr      resd    50
+tVolArr     resd    50
 
 ; ***************************
 
@@ -87,7 +94,7 @@ totalSurfaceArea:
     mul     ebx                         ; 2*a(n)*l(n) + a(n)^2
     mul     word [w2]
     add     eax, r12d
-    add     [totalSa], eax              ; totalSa += totalSurfaceArea(n)
+    add     [tSa], eax                  ; tSa += totalSurfaceArea(n)
     inc     r11
     loop    totalSurfaceArea
     mov     cl, [num]                   ; Reset counters
@@ -100,7 +107,7 @@ totalVolume:
     mov     ebx, [r10 + r11*4]          ; Load h(n)
     mul     ebx                         ; a(n)^2 * h(n)
     div     dword [d3]                  ; (a(n)^2 * h(n)) / 3
-    add     [totalVol], eax             ; totalVol += volume(n)
+    add     [tVol], eax                 ; tVol += volume(n)
     inc     r11
     loop    totalVolume
 
