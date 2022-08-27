@@ -80,11 +80,11 @@ loopStart:
     movzx   eax, byte [r8 + r11*1]      ; Load a(n)
     mov     ebx, eax                    ; Pass the same thing into bl
     mul     eax                         ; a(n)^2
-    mov     ecx, eax                    ; Load a(n)^2 to cx
+    mov     r12d, eax                   ; Load a(n)^2 to r12
     movzx   eax, word [r9 + r11*2]      ; Load l(n)
     mul     ebx                         ; 2*a(n)*l(n) + a(n)^2
     mul     word [w2]
-    add     eax, ecx
+    add     eax, r12d
     add     [sa], eax                   ; sa += totalSurfaceArea(n)
     inc     r11
 

@@ -107,20 +107,20 @@
     77                                  loopStart:
     78                                  
     79                                                                          ; * totalSurfaceArea(n) = a(n)^2 + 2*a(n)*l(n)
-    80 00000021 430FB60418                  movzx     eax, byte [r8 + r11*1]           ; Load a(n)
+    80 00000021 430FB60418                  movzx   eax, byte [r8 + r11*1]      ; Load a(n)
     81 00000026 89C3                        mov     ebx, eax                    ; Pass the same thing into bl
     82 00000028 F7E0                        mul     eax                         ; a(n)^2
-    83 0000002A 89C1                        mov     ecx, eax                    ; Load a(n)^2 to cx
-    84 0000002C 430FB70459                  movzx   eax, word [r9 + r11*2]      ; Load l(n)
-    85 00000031 F7E3                        mul     ebx                         ; 2*a(n)*l(n)
-    86 00000033 66F725(63010000)            mul     word [w2]
-    87 0000003A 01C8                        add     eax, ecx
-    88 0000003C 0105(5F010000)              add     [sa], eax                   ; sa += totalSurfaceArea(n)
-    89 00000042 49FFC3                      inc     r11
+    83 0000002A 4189C4                      mov     r12d, eax                   ; Load a(n)^2 to r12
+    84 0000002D 430FB70459                  movzx   eax, word [r9 + r11*2]      ; Load l(n)
+    85 00000032 F7E3                        mul     ebx                         ; 2*a(n)*l(n) + a(n)^2
+    86 00000034 66F725(63010000)            mul     word [w2]
+    87 0000003B 4401E0                      add     eax, r12d
+    88 0000003E 0105(5F010000)              add     [sa], eax                   ; sa += totalSurfaceArea(n)
+    89 00000044 49FFC3                      inc     r11
     90                                  
-    91 00000045 E2DA                        loop    loopStart
+    91 00000047 E2D8                        loop    loopStart
     92                                  
     93                                  exit:
-    94 00000047 B801000002                  mov     rax, SYS_exit
-    95 0000004C BF00000000                  mov     rdi, SUCCESS
-    96 00000051 0F05                        syscall
+    94 00000049 B801000002                  mov     rax, SYS_exit
+    95 0000004E BF00000000                  mov     rdi, SUCCESS
+    96 00000053 0F05                        syscall
