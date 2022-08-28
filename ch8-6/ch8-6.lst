@@ -1,64 +1,81 @@
      1                                  ; Chapter 8, exercise 6
      2                                  ; Implement the BubbleSort algorithm
      3                                  
-     4                                  default rel
-     5                                  
-     6                                  ; ***************************
-     7                                  
-     8                                  section     .data
-     9                                  
-    10                                  ; Constants
-    11                                  SUCCESS     equ     0
-    12                                  SYS_exit    equ     0x2000001
-    13                                  
-    14                                  ; Variables
-    15 00000000 080307020A              nums        db      8,  3,  7,  2,  10      ; List of numbers to sort
-    16 00000005 0C00010705                          db      12, 0,  1,  7,  5
+     4                                  ; for ( i = (len-1) to 0 ) {
+     5                                  ;   swapped = false
+     6                                  ;   for ( j = 0 to i-1 )
+     7                                  ;       if ( nums(j) > nums(j+1) ) {
+     8                                  ;           tmp = nums(j)
+     9                                  ;           nums(j) = nums(j+1)
+    10                                  ;           nums(j+1) = tmp
+    11                                  ;           swapped = true
+    12                                  ;       }
+    13                                  ;   if ( swapped = false ) exit
+    14                                  ; }
+    15                                  
+    16                                  default rel
     17                                  
-    18 0000000A 0A                      len         db      10                      ; Length of the array
+    18                                  ; ***************************
     19                                  
-    20                                  ; ***************************
+    20                                  section     .data
     21                                  
-    22                                  section     .text
-    23                                  global _start
-    24                                  _start:
+    22                                  ; Constants
+    23                                  SUCCESS     equ     0
+    24                                  SYS_exit    equ     0x2000001
     25                                  
-    26 00000000 4C8D05(00000000)            lea     r8, [nums]                      ; Address of nums
-    27 00000007 41B900000000                mov     r9, 0                           ; Displacement for j
-    28 0000000D 8A05(0A000000)              mov     al, [len]                       ; Set up for(i = (len-1) to 0)
+    26                                  ; Variables
+    27 00000000 080307020A              nums        db      8,  3,  7,  2,  10      ; List of numbers to sort
+    28 00000005 0C00010705                          db      12, 0,  1,  7,  5
     29                                  
-    30                                  forI:
+    30 0000000A 0A                      len         db      10                      ; Length of the array
     31                                  
-    32 00000013 FEC8                        dec     al                              ; i--
-    33 00000015 3C00                        cmp     al, 0
-    34 00000017 7C33                        jl      exit
-    35                                  
-    36                                  forJ:
+    32                                  ; ***************************
+    33                                  
+    34                                  section     .text
+    35                                  global _start
+    36                                  _start:
     37                                  
-    38 00000019 88C3                        mov     bl, al                          ; Set up for(j = 0 to i-1)
-    39 0000001B FECB                        dec     bl
-    40 0000001D 41B900000000                mov     r9, 0
-    41                                  
-    42                                  comparison:                                 ; if (nums(j) > nums(j+1))
-    43                                  
-    44 00000023 4138D9                      cmp     r9b, bl
-    45 00000026 7FEB                        jg      forI                            ; Jump early if we've already iterated through j values           
-    46 00000028 478A1408                    mov     r10b, [r8 + r9]                 ; nums(j)
-    47 0000002C 478A5C0801                  mov     r11b, [r8 + r9+1]               ; nums(j+1)
-    48 00000031 4D39DA                      cmp     r10, r11
-    49 00000034 7F05                        jg      swap
-    50 00000036 49FFC1                      inc     r9
-    51 00000039 EBE8                        jmp     comparison
-    52                                  
-    53                                  swap:
-    54                                  
-    55 0000003B 4488D1                      mov     cl, r10b                        ; cl is "tmp"
-    56 0000003E 47881C08                    mov     [r8 + r9], r11b
-    57 00000042 43884C0801                  mov     [r8 + r9+1], cl
-    58 00000047 49FFC1                      inc     r9
-    59 0000004A EBD7                        jmp     comparison
-    60                                  
-    61                                  exit:
-    62 0000004C B801000002                  mov     rax, SYS_exit
-    63 00000051 BF00000000                  mov     rdi, SUCCESS
-    64 00000056 0F05                        syscall
+    38 00000000 4C8D05(00000000)            lea     r8, [nums]                      ; Address of nums
+    39 00000007 41B900000000                mov     r9, 0                           ; Displacement for j
+    40 0000000D 8A05(0A000000)              mov     al, [len]                       ; Set up for(i = (len-1) to 0)
+    41 00000013 B201                        mov     dl, 1                           ; swapped = true
+    42                                  
+    43                                  forI:
+    44                                  
+    45 00000015 80FA00                      cmp     dl, 0                           ; if (!swapped) {exit}
+    46 00000018 743D                        je      exit
+    47 0000001A B200                        mov     dl, 0                           ; swapped = false
+    48 0000001C FEC8                        dec     al                              ; i--
+    49 0000001E 3C00                        cmp     al, 0
+    50 00000020 7C35                        jl      exit
+    51                                  
+    52                                  forJ:
+    53                                  
+    54 00000022 88C3                        mov     bl, al                          ; Set up for(j = 0 to i-1)
+    55 00000024 FECB                        dec     bl
+    56 00000026 41B900000000                mov     r9, 0
+    57                                  
+    58                                  comparison:                                 ; if (nums(j) > nums(j+1))
+    59                                  
+    60 0000002C 4138D9                      cmp     r9b, bl
+    61 0000002F 7FE4                        jg      forI                            ; Jump early if we've already iterated through j values           
+    62 00000031 478A1408                    mov     r10b, [r8 + r9]                 ; nums(j)
+    63 00000035 478A5C0801                  mov     r11b, [r8 + r9+1]               ; nums(j+1)
+    64 0000003A 4D39DA                      cmp     r10, r11
+    65 0000003D 7F05                        jg      swap
+    66 0000003F 49FFC1                      inc     r9
+    67 00000042 EBE8                        jmp     comparison
+    68                                  
+    69                                  swap:
+    70                                  
+    71 00000044 4488D1                      mov     cl, r10b                        ; cl is "tmp"
+    72 00000047 47881C08                    mov     [r8 + r9], r11b
+    73 0000004B 43884C0801                  mov     [r8 + r9+1], cl
+    74 00000050 49FFC1                      inc     r9
+    75 00000053 B201                        mov     dl, 1                           ; swapped = true
+    76 00000055 EBD5                        jmp     comparison
+    77                                  
+    78                                  exit:
+    79 00000057 B801000002                  mov     rax, SYS_exit
+    80 0000005C BF00000000                  mov     rdi, SUCCESS
+    81 00000061 0F05                        syscall

@@ -1,6 +1,18 @@
 ; Chapter 8, exercise 6
 ; Implement the BubbleSort algorithm
 
+; for ( i = (len-1) to 0 ) {
+;   swapped = false
+;   for ( j = 0 to i-1 )
+;       if ( nums(j) > nums(j+1) ) {
+;           tmp = nums(j)
+;           nums(j) = nums(j+1)
+;           nums(j+1) = tmp
+;           swapped = true
+;       }
+;   if ( swapped = false ) exit
+; }
+
 default rel
 
 ; ***************************
@@ -26,9 +38,13 @@ _start:
     lea     r8, [nums]                      ; Address of nums
     mov     r9, 0                           ; Displacement for j
     mov     al, [len]                       ; Set up for(i = (len-1) to 0)
+    mov     dl, 1                           ; swapped = true
 
 forI:
 
+    cmp     dl, 0                           ; if (!swapped) {exit}
+    je      exit
+    mov     dl, 0                           ; swapped = false
     dec     al                              ; i--
     cmp     al, 0
     jl      exit
@@ -56,6 +72,7 @@ swap:
     mov     [r8 + r9], r11b
     mov     [r8 + r9+1], cl
     inc     r9
+    mov     dl, 1                           ; swapped = true
     jmp     comparison
 
 exit:
