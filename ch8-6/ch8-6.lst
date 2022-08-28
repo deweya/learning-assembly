@@ -1,0 +1,63 @@
+     1                                  ; Chapter 8, exercise 6
+     2                                  ; Implement the BubbleSort algorithm
+     3                                  
+     4                                  default rel
+     5                                  
+     6                                  ; ***************************
+     7                                  
+     8                                  section     .data
+     9                                  
+    10                                  ; Constants
+    11                                  SUCCESS     equ     0
+    12                                  SYS_exit    equ     0x2000001
+    13                                  
+    14                                  ; Variables
+    15 00000000 080307020A              nums        db      8,  3,  7,  2,  10      ; List of numbers to sort
+    16                                  
+    17 00000005 05                      len         db      5                       ; Length of the array
+    18                                  
+    19                                  ; ***************************
+    20                                  
+    21                                  section     .text
+    22                                  global _start
+    23                                  _start:
+    24                                  
+    25 00000000 4C8D05(00000000)            lea     r8, [nums]                      ; Address of nums
+    26 00000007 41B900000000                mov     r9, 0                           ; Displacement for j
+    27 0000000D 8A05(05000000)              mov     al, [len]                       ; Set up for(i = (len-1) to 0)
+    28                                  
+    29                                  forI:
+    30                                  
+    31 00000013 FEC8                        dec     al                              ; i--
+    32 00000015 3C00                        cmp     al, 0
+    33 00000017 7C33                        jl      exit
+    34                                  
+    35                                  forJ:
+    36                                  
+    37 00000019 88C3                        mov     bl, al                          ; Set up for(j = 0 to i-1)
+    38 0000001B FECB                        dec     bl
+    39 0000001D 41B900000000                mov     r9, 0
+    40                                  
+    41                                  comparison:                                 ; if (nums(j) > nums(j+1))
+    42                                  
+    43 00000023 4138D9                      cmp     r9b, bl
+    44 00000026 7FEB                        jg      forI                            ; Jump early if we've already iterated through j values           
+    45 00000028 478A1408                    mov     r10b, [r8 + r9]                 ; nums(j)
+    46 0000002C 478A5C0801                  mov     r11b, [r8 + r9+1]               ; nums(j+1)
+    47 00000031 4D39DA                      cmp     r10, r11
+    48 00000034 7F05                        jg      swap
+    49 00000036 49FFC1                      inc     r9
+    50 00000039 EBE8                        jmp     comparison
+    51                                  
+    52                                  swap:
+    53                                  
+    54 0000003B 4488D1                      mov     cl, r10b                        ; cl is "tmp"
+    55 0000003E 47881C08                    mov     [r8 + r9], r11b
+    56 00000042 43884C0801                  mov     [r8 + r9+1], cl
+    57 00000047 49FFC1                      inc     r9
+    58 0000004A EBD7                        jmp     comparison
+    59                                  
+    60                                  exit:
+    61 0000004C B801000002                  mov     rax, SYS_exit
+    62 00000051 BF00000000                  mov     rdi, SUCCESS
+    63 00000056 0F05                        syscall
