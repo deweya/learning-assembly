@@ -13,8 +13,9 @@ SYS_exit    equ     0x2000001
 
 ; Variables
 nums        db      8,  3,  7,  2,  10      ; List of numbers to sort
+            db      12, 0,  1,  7,  5
 
-len         db      5                       ; Length of the array
+len         db      10                      ; Length of the array
 
 ; ***************************
 
