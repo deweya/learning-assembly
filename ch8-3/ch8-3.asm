@@ -58,7 +58,7 @@ h           dd      14145, 11134, 15123, 15123, 14123           ; List of h (hei
             dd      11134, 14134, 14576, 15457, 17142
             dd      13153, 11153, 12184, 14142, 17134
 
-num         db      50                                          ; Number of square pyramids
+num         db      5                                           ; Number of square pyramids
 
 tSa         dd      0                                           ; Sum of all surface areas
 minSa       dd      0x7fffffff                                  ; Min SA
@@ -192,6 +192,7 @@ setAvgSa:
     mov     eax, [tSa]                  ; avgSa = totalSurfaceArea(n) / number of pyramids
     div     ebx
     mov     [avgSa], eax
+    mov     edx, 0                      ; Clear out edx so it doesn't confuse the next div instruction
 
 setAvgVol:
 
