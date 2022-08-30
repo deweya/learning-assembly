@@ -13,49 +13,63 @@
     13                                  
     14                                  ; Variables
     15 00000000 7261636563617200        string      db      "racecar", 0        ; The string that we will check if it's a palindrome
-    16                                  
-    17                                  ; ***************************
-    18                                  
-    19                                  section     .bss
-    20                                  
-    21 00000000 <res 32h>               compare     resb    50                  ; The comparison string, to help determine if the original string is a palindrome
-    22                                  
-    23                                  ; ***************************
-    24                                  
-    25                                  section     .text
-    26                                  global _start
-    27                                  _start:
-    28                                  
-    29 00000000 4C8D05(00000000)            lea     r8, [string]
-    30 00000007 41B900000000                mov     r9, 0                       ; displacement for string
-    31 0000000D 4C8D15(00000000)            lea     r10, [compare]
-    32 00000014 41BB00000000                mov     r11, 0                      ; displacement for compare
-    33 0000001A B900000000                  mov     rcx, 0                      ; length of string
-    34                                  
-    35                                  pushStart:
-    36                                  
-    37 0000001F 438A0408                    mov     al, [r8 + r9]
-    38 00000023 50                          push    rax
-    39 00000024 48FFC1                      inc     rcx
-    40                                  
-    41 00000027 4883F800                    cmp     rax, 0
-    42 0000002B 7405                        je      popStart
-    43                                  
-    44 0000002D 49FFC1                      inc     r9
-    45 00000030 EBED                        jmp     pushStart
-    46                                  
-    47                                  popStart:
-    48                                  
-    49 00000032 58                          pop     rax
-    50 00000033 4B89041A                    mov     [r10 + r11], rax
-    51 00000037 49FFC3                      inc     r11
-    52 0000003A E2F6                        loop    popStart
-    53                                  
-    54                                  cmpStrings:
-    55                                  
-    56 0000003C 49D122                      shl     qword [r10], 1
-    57                                  
-    58                                  exit:
-    59 0000003F B801000002                  mov     rax, SYS_exit
-    60 00000044 BF00000000                  mov     rdi, SUCCESS
-    61 00000049 0F05                        syscall
+    16 00000008 00                      isPdrome    db      0
+    17                                  
+    18                                  ; ***************************
+    19                                  
+    20                                  section     .bss
+    21                                  
+    22 00000000 <res 32h>               compare     resb    50                  ; The comparison string, to help determine if the original string is a palindrome
+    23                                  
+    24                                  ; ***************************
+    25                                  
+    26                                  section     .text
+    27                                  global _start
+    28                                  _start:
+    29                                  
+    30 00000000 4C8D05(00000000)            lea     r8, [string]
+    31 00000007 41B900000000                mov     r9, 0                       ; displacement for string
+    32 0000000D 4C8D15(00000000)            lea     r10, [compare]
+    33 00000014 41BB00000000                mov     r11, 0                      ; displacement for compare
+    34 0000001A B900000000                  mov     rcx, 0                      ; length of string
+    35                                  
+    36                                  pushStart:
+    37                                  
+    38 0000001F 438A0408                    mov     al, [r8 + r9]
+    39 00000023 50                          push    rax
+    40 00000024 48FFC1                      inc     rcx
+    41                                  
+    42 00000027 4883F800                    cmp     rax, 0
+    43 0000002B 7405                        je      popStart
+    44                                  
+    45 0000002D 49FFC1                      inc     r9
+    46 00000030 EBED                        jmp     pushStart
+    47                                  
+    48                                  popStart:
+    49                                  
+    50 00000032 58                          pop     rax
+    51 00000033 4883F800                    cmp     rax, 0                      ; We don't want to push the null terminating character to "compare"
+    52 00000037 7502                        jne     addToCompare
+    53 00000039 E2F7                        loop    popStart
+    54                                  
+    55                                  addToCompare:
+    56                                  
+    57 0000003B 4B89041A                    mov     [r10 + r11], rax
+    58 0000003F 49FFC3                      inc     r11
+    59 00000042 E2EE                        loop    popStart
+    60                                  
+    61                                  determinePdrome:
+    62                                  
+    63 00000044 498B00                      mov     rax, [r8]
+    64 00000047 483B05(00000000)            cmp     rax, [compare]
+    65 0000004E 7402                        je      setPdrome
+    66 00000050 7507                        jne     exit
+    67                                  
+    68                                  setPdrome:
+    69                                  
+    70 00000052 C605(08000000)01            mov     byte [isPdrome], 1
+    71                                  
+    72                                  exit:
+    73 00000059 B801000002                  mov     rax, SYS_exit
+    74 0000005E BF00000000                  mov     rdi, SUCCESS
+    75 00000063 0F05                        syscall

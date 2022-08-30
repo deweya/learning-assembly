@@ -13,6 +13,7 @@ SYS_exit    equ     0x2000001
 
 ; Variables
 string      db      "racecar", 0        ; The string that we will check if it's a palindrome
+isPdrome    db      0
 
 ; ***************************
 
@@ -47,9 +48,26 @@ pushStart:
 popStart:
 
     pop     rax
+    cmp     rax, 0                      ; We don't want to push the null terminating character to "compare"
+    jne     addToCompare
+    loop    popStart
+
+addToCompare:
+
     mov     [r10 + r11], rax
     inc     r11
     loop    popStart
+
+determinePdrome:
+
+    mov     rax, [r8]
+    cmp     rax, [compare]
+    je      setPdrome
+    jne     exit
+
+setPdrome:
+
+    mov     byte [isPdrome], 1
 
 exit:
     mov     rax, SYS_exit
