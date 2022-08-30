@@ -1,0 +1,61 @@
+     1                                  ; Chapter 9, exercise 2
+     2                                  ; Determine if a string is a palindrome
+     3                                  
+     4                                  default rel
+     5                                  
+     6                                  ; ***************************
+     7                                  
+     8                                  section     .data
+     9                                  
+    10                                  ; Constants
+    11                                  SUCCESS     equ     0
+    12                                  SYS_exit    equ     0x2000001
+    13                                  
+    14                                  ; Variables
+    15 00000000 7261636563617200        string      db      "racecar", 0        ; The string that we will check if it's a palindrome
+    16                                  
+    17                                  ; ***************************
+    18                                  
+    19                                  section     .bss
+    20                                  
+    21 00000000 <res 32h>               compare     resb    50                  ; The comparison string, to help determine if the original string is a palindrome
+    22                                  
+    23                                  ; ***************************
+    24                                  
+    25                                  section     .text
+    26                                  global _start
+    27                                  _start:
+    28                                  
+    29 00000000 4C8D05(00000000)            lea     r8, [string]
+    30 00000007 41B900000000                mov     r9, 0                       ; displacement for string
+    31 0000000D 4C8D15(00000000)            lea     r10, [compare]
+    32 00000014 41BB00000000                mov     r11, 0                      ; displacement for compare
+    33 0000001A B900000000                  mov     rcx, 0                      ; length of string
+    34                                  
+    35                                  pushStart:
+    36                                  
+    37 0000001F 438A0408                    mov     al, [r8 + r9]
+    38 00000023 50                          push    rax
+    39 00000024 48FFC1                      inc     rcx
+    40                                  
+    41 00000027 4883F800                    cmp     rax, 0
+    42 0000002B 7405                        je      popStart
+    43                                  
+    44 0000002D 49FFC1                      inc     r9
+    45 00000030 EBED                        jmp     pushStart
+    46                                  
+    47                                  popStart:
+    48                                  
+    49 00000032 58                          pop     rax
+    50 00000033 4B89041A                    mov     [r10 + r11], rax
+    51 00000037 49FFC3                      inc     r11
+    52 0000003A E2F6                        loop    popStart
+    53                                  
+    54                                  cmpStrings:
+    55                                  
+    56 0000003C 49D122                      shl     qword [r10], 1
+    57                                  
+    58                                  exit:
+    59 0000003F B801000002                  mov     rax, SYS_exit
+    60 00000044 BF00000000                  mov     rdi, SUCCESS
+    61 00000049 0F05                        syscall
