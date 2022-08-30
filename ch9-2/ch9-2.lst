@@ -12,7 +12,7 @@
     12                                  SYS_exit    equ     0x2000001
     13                                  
     14                                  ; Variables
-    15 00000000 7261636563617200        string      db      "racecar", 0        ; The string that we will check if it's a palindrome
+    15 00000000 6162636465666700        string      db      "abcdefg", 0        ; The string that we will check if it's a palindrome
     16 00000008 01                      isPdrome    db      1
     17                                  
     18                                  ; ***************************

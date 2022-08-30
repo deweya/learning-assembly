@@ -12,7 +12,7 @@ SUCCESS     equ     0
 SYS_exit    equ     0x2000001
 
 ; Variables
-string      db      "racecar", 0        ; The string that we will check if it's a palindrome
+string      db      "abcdefg", 0        ; The string that we will check if it's a palindrome
 isPdrome    db      1
 
 ; ***************************
