@@ -12,7 +12,7 @@ SUCCESS     equ     0
 SYS_exit    equ     0x2000001
 
 ; Variables
-string      db      "abcdefg", 0        ; The string that we will check if it's a palindrome
+string      db      "racecar", 0        ; The string that we will check if it's a palindrome
 isPdrome    db      1
 
 ; ***************************
@@ -47,9 +47,6 @@ popStart:
     mov     bl, byte [r8 + rcx]
     cmp     al, bl
     jne     notPdrome                   ; As soon as a char doesn't match, short circuit and exit
-    
-    cmp     rcx, 0
-    je      exit
 
     inc     rcx
     cmp     rcx, rdx                    ; If we reached the length of the original string, then exit

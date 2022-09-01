@@ -12,7 +12,7 @@
     12                                  SYS_exit    equ     0x2000001
     13                                  
     14                                  ; Variables
-    15 00000000 6162636465666700        string      db      "abcdefg", 0        ; The string that we will check if it's a palindrome
+    15 00000000 7261636563617200        string      db      "racecar", 0        ; The string that we will check if it's a palindrome
     16 00000008 01                      isPdrome    db      1
     17                                  
     18                                  ; ***************************
@@ -46,22 +46,19 @@
     46 00000025 58                          pop     rax
     47 00000026 418A1C08                    mov     bl, byte [r8 + rcx]
     48 0000002A 38D8                        cmp     al, bl
-    49 0000002C 7510                        jne     notPdrome                   ; As soon as a char doesn't match, short circuit and exit
-    50                                      
-    51 0000002E 4883F900                    cmp     rcx, 0
-    52 00000032 7411                        je      exit
-    53                                  
-    54 00000034 48FFC1                      inc     rcx
-    55 00000037 4839D1                      cmp     rcx, rdx                    ; If we reached the length of the original string, then exit
-    56 0000003A 7409                        je      exit
-    57                                  
-    58 0000003C EBE7                        jmp     popStart
-    59                                  
-    60                                  notPdrome:
-    61                                  
-    62 0000003E C605(08000000)00            mov     byte [isPdrome], 0
-    63                                  
-    64                                  exit:
-    65 00000045 B801000002                  mov     rax, SYS_exit
-    66 0000004A BF00000000                  mov     rdi, SUCCESS
-    67 0000004F 0F05                        syscall
+    49 0000002C 750A                        jne     notPdrome                   ; As soon as a char doesn't match, short circuit and exit
+    50                                  
+    51 0000002E 48FFC1                      inc     rcx
+    52 00000031 4839D1                      cmp     rcx, rdx                    ; If we reached the length of the original string, then exit
+    53 00000034 7409                        je      exit
+    54                                  
+    55 00000036 EBED                        jmp     popStart
+    56                                  
+    57                                  notPdrome:
+    58                                  
+    59 00000038 C605(08000000)00            mov     byte [isPdrome], 0
+    60                                  
+    61                                  exit:
+    62 0000003F B801000002                  mov     rax, SYS_exit
+    63 00000044 BF00000000                  mov     rdi, SUCCESS
+    64 00000049 0F05                        syscall
