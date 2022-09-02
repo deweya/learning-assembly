@@ -48,11 +48,12 @@
     48                                  convert:
     49                                  
     50 00000028 58                          pop     rax
-    51 00000029 43880408                    mov     [r8 + r9], al
-    52 0000002D 49FFC1                      inc     r9
-    53 00000030 E2F6                        loop    convert
-    54                                  
-    55                                  exit:
-    56 00000032 B801000002                  mov     rax, SYS_exit
-    57 00000037 BF00000000                  mov     rdi, SUCCESS
-    58 0000003C 0F05                        syscall
+    51 00000029 0430                        add     al, 48
+    52 0000002B 43880408                    mov     [r8 + r9], al
+    53 0000002F 49FFC1                      inc     r9
+    54 00000032 E2F4                        loop    convert
+    55                                  
+    56                                  exit:
+    57 00000034 B801000002                  mov     rax, SYS_exit
+    58 00000039 BF00000000                  mov     rdi, SUCCESS
+    59 0000003E 0F05                        syscall

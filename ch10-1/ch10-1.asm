@@ -48,6 +48,7 @@ divLoop:
 convert:
 
     pop     rax
+    add     al, 48
     mov     [r8 + r9], al
     inc     r9
     loop    convert
