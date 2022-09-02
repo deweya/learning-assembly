@@ -1,0 +1,49 @@
+     1                                  ; Chapter 10, exercise 1
+     2                                  ; Convert an integer into a string
+     3                                  
+     4                                  default rel
+     5                                  
+     6                                  ; ***************************
+     7                                  
+     8                                  section     .data
+     9                                  
+    10                                  ; Constants
+    11                                  SUCCESS     equ     0
+    12                                  SYS_exit    equ     0x2000001
+    13                                  
+    14                                  ; Variables
+    15 00000000 7B                      integer     db      123
+    16 00000001 00                      length      db      0
+    17 00000002 0A                      b10         db      10
+    18                                  
+    19                                  ; ***************************
+    20                                  
+    21                                  section     .bss
+    22                                  
+    23                                  string      resb    0
+    24                                  
+    25                                  ; ***************************
+    26                                  
+    27                                  section     .text
+    28                                  global _start
+    29                                  _start:
+    30                                  
+    31 00000000 8A05(00000000)              mov     al, [integer]
+    32                                  
+    33                                  divLoop:
+    34                                  
+    35                                      ; Get the length of the integer
+    36                                      ; Push the individual digits to the stack
+    37                                  
+    38 00000006 B400                        mov     ah, 0
+    39 00000008 FE05(01000000)              inc     byte [length]
+    40 0000000E F635(02000000)              div     byte [b10]
+    41 00000014 88E2                        mov     dl, ah
+    42 00000016 52                          push    rdx
+    43 00000017 3C00                        cmp     al, 0
+    44 00000019 75EB                        jne     divLoop
+    45                                  
+    46                                  exit:
+    47 0000001B B801000002                  mov     rax, SYS_exit
+    48 00000020 BF00000000                  mov     rdi, SUCCESS
+    49 00000025 0F05                        syscall
