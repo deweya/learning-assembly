@@ -48,7 +48,7 @@ divLoop:
 convert:
 
     pop     rax
-    add     al, 48
+    add     al, 48                  ; 48 is ascii 0
     mov     [r8 + r9], al
     inc     r9
     loop    convert
