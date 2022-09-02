@@ -20,7 +20,7 @@ b10         db      10
 
 section     .bss
 
-string      resb    0
+string      resb    4
 
 ; ***************************
 
@@ -29,6 +29,7 @@ global _start
 _start:
 
     mov     al, [integer]
+    lea     r8, [string]
 
 divLoop:
 
@@ -38,10 +39,18 @@ divLoop:
     mov     ah, 0
     inc     byte [length]
     div     byte [b10]
-    mov     dl, ah
+    mov     dl, ah                  ; Move remainder to dl and push to stack
     push    rdx
-    cmp     al, 0
+    cmp     al, 0                   ; If integer == 0, then we have finished dividing
     jne     divLoop
+    mov     cl, [length]            ; Set up loop counter
+
+convert:
+
+    pop     rax
+    mov     [r8 + r9], al
+    inc     r9
+    loop    convert
 
 exit:
     mov     rax, SYS_exit

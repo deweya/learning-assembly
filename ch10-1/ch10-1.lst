@@ -20,7 +20,7 @@
     20                                  
     21                                  section     .bss
     22                                  
-    23                                  string      resb    0
+    23 00000000 ????????                string      resb    4
     24                                  
     25                                  ; ***************************
     26                                  
@@ -29,21 +29,30 @@
     29                                  _start:
     30                                  
     31 00000000 8A05(00000000)              mov     al, [integer]
-    32                                  
-    33                                  divLoop:
-    34                                  
-    35                                      ; Get the length of the integer
-    36                                      ; Push the individual digits to the stack
-    37                                  
-    38 00000006 B400                        mov     ah, 0
-    39 00000008 FE05(01000000)              inc     byte [length]
-    40 0000000E F635(02000000)              div     byte [b10]
-    41 00000014 88E2                        mov     dl, ah
-    42 00000016 52                          push    rdx
-    43 00000017 3C00                        cmp     al, 0
-    44 00000019 75EB                        jne     divLoop
-    45                                  
-    46                                  exit:
-    47 0000001B B801000002                  mov     rax, SYS_exit
-    48 00000020 BF00000000                  mov     rdi, SUCCESS
-    49 00000025 0F05                        syscall
+    32 00000006 4C8D05(00000000)            lea     r8, [string]
+    33                                  
+    34                                  divLoop:
+    35                                  
+    36                                      ; Get the length of the integer
+    37                                      ; Push the individual digits to the stack
+    38                                  
+    39 0000000D B400                        mov     ah, 0
+    40 0000000F FE05(01000000)              inc     byte [length]
+    41 00000015 F635(02000000)              div     byte [b10]
+    42 0000001B 88E2                        mov     dl, ah                  ; Move remainder to dl and push to stack
+    43 0000001D 52                          push    rdx
+    44 0000001E 3C00                        cmp     al, 0                   ; If integer == 0, then we have finished dividing
+    45 00000020 75EB                        jne     divLoop
+    46 00000022 8A0D(01000000)              mov     cl, [length]            ; Set up loop counter
+    47                                  
+    48                                  convert:
+    49                                  
+    50 00000028 58                          pop     rax
+    51 00000029 43880408                    mov     [r8 + r9], al
+    52 0000002D 49FFC1                      inc     r9
+    53 00000030 E2F6                        loop    convert
+    54                                  
+    55                                  exit:
+    56 00000032 B801000002                  mov     rax, SYS_exit
+    57 00000037 BF00000000                  mov     rdi, SUCCESS
+    58 0000003C 0F05                        syscall
