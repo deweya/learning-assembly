@@ -1,0 +1,64 @@
+     1                                  ; Chapter 11, exercise 1
+     2                                  ; Implement a macro for finding the average of a list of numbers
+     3                                  
+     4                                  default rel
+     5                                  
+     6                                  ; *********************
+     7                                  
+     8                                  ; -----
+     9                                  ; Calculate the average of a list of numbers
+    10                                  ; %1 - destination
+    11                                  ; %2 - list of words
+    12                                  %macro  cAvg     2
+    13                                      lea     r8, [%2]
+    14                                      mov     rax, 0                      ; rax holds the sum
+    15                                      mov     r9, 0
+    16                                      mov     cl, [len]
+    17                                  %%loopSum:
+    18                                      add     ax, [r8 + r9*2]
+    19                                      inc     r9
+    20                                      loop    %%loopSum
+    21                                  %%calcAvg:
+    22                                      mov     rdx, 0                      ; make sure any weirdness won't happen when we divide
+    23                                      mov     bx, [len]
+    24                                      div     bx
+    25                                      mov     [%1], ax
+    26                                  %endmacro
+    27                                  
+    28                                  ; *********************
+    29                                  
+    30                                  section     .data
+    31                                  
+    32                                  SUCCESS     equ     0
+    33                                  SYS_exit    equ     0x2000001
+    34                                  
+    35 00000000 6400EE02160000002B-     lst         dw      100, 750, 22, 0, 555
+    35 00000009 02                 
+    36 0000000A 05                      len         db      5
+    37 0000000B 0000                    avg         dw      0
+    38                                  
+    39                                  ; *********************
+    40                                  
+    41                                  section     .text
+    42                                  global _start
+    43                                  _start:
+    44                                  
+    45                                      cAvg    avg, lst
+    13 00000000 4C8D05(00000000)    <1>  lea r8, [%2]
+    14 00000007 B800000000          <1>  mov rax, 0
+    15 0000000C 41B900000000        <1>  mov r9, 0
+    16 00000012 8A0D(0A000000)      <1>  mov cl, [len]
+    17                              <1> %%loopSum:
+    18 00000018 6643030448          <1>  add ax, [r8 + r9*2]
+    19 0000001D 49FFC1              <1>  inc r9
+    20 00000020 E2F6                <1>  loop %%loopSum
+    21                              <1> %%calcAvg:
+    22 00000022 BA00000000          <1>  mov rdx, 0
+    23 00000027 668B1D(0A000000)    <1>  mov bx, [len]
+    24 0000002E 66F7F3              <1>  div bx
+    25 00000031 668905(0B000000)    <1>  mov [%1], ax
+    46                                  
+    47                                  exit:
+    48 00000038 B801000002                  mov     rax, SYS_exit
+    49 0000003D BF00000000                  mov     rdi, SUCCESS
+    50 00000042 0F05                        syscall
