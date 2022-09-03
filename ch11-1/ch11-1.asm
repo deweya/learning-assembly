@@ -48,6 +48,26 @@ default rel
 %%done:
 %endmacro
 
+; -----
+; Find the maximum in a list of numbers
+%macro  fMax    2
+    lea     r8, [%2]
+    mov     cl, [len]
+    mov     r9, 0
+%%loopMax:
+    mov     ax, [r8 + r9*2]
+    cmp     [%1], ax
+    jl      %%setMax
+%%incLoop:
+    inc     r9
+    loop    %%loopMax
+    jmp     %%done
+%%setMax:
+    mov     [%1], ax
+    jmp     %%incLoop
+%%done:
+%endmacro
+
 ; *********************
 
 section     .data
@@ -69,6 +89,7 @@ _start:
 
     cAvg    avg, lst
     fMin    min, lst
+    fMax    max, lst
 
 exit:
     mov     rax, SYS_exit

@@ -48,27 +48,47 @@
     48                                  %%done:
     49                                  %endmacro
     50                                  
-    51                                  ; *********************
-    52                                  
-    53                                  section     .data
-    54                                  
-    55                                  SUCCESS     equ     0
-    56                                  SYS_exit    equ     0x2000001
-    57                                  
-    58 00000000 6400EE02160000002B-     lst         dw      100, 750, 22, 0, 555
-    58 00000009 02                 
-    59 0000000A 05                      len         db      5
-    60 0000000B 0000                    avg         dw      0
-    61 0000000D FF7F                    min         dw      0x7fff
-    62 0000000F 0000                    max         dw      0
-    63                                  
-    64                                  ; *********************
-    65                                  
-    66                                  section     .text
-    67                                  global _start
-    68                                  _start:
-    69                                  
-    70                                      cAvg    avg, lst
+    51                                  ; -----
+    52                                  ; Find the maximum in a list of numbers
+    53                                  %macro  fMax    2
+    54                                      lea     r8, [%2]
+    55                                      mov     cl, [len]
+    56                                      mov     r9, 0
+    57                                  %%loopMax:
+    58                                      mov     ax, [r8 + r9*2]
+    59                                      cmp     [%1], ax
+    60                                      jl      %%setMax
+    61                                  %%incLoop:
+    62                                      inc     r9
+    63                                      loop    %%loopMax
+    64                                      jmp     %%done
+    65                                  %%setMax:
+    66                                      mov     [%1], ax
+    67                                      jmp     %%incLoop
+    68                                  %%done:
+    69                                  %endmacro
+    70                                  
+    71                                  ; *********************
+    72                                  
+    73                                  section     .data
+    74                                  
+    75                                  SUCCESS     equ     0
+    76                                  SYS_exit    equ     0x2000001
+    77                                  
+    78 00000000 6400EE02160000002B-     lst         dw      100, 750, 22, 0, 555
+    78 00000009 02                 
+    79 0000000A 05                      len         db      5
+    80 0000000B 0000                    avg         dw      0
+    81 0000000D FF7F                    min         dw      0x7fff
+    82 0000000F 0000                    max         dw      0
+    83                                  
+    84                                  ; *********************
+    85                                  
+    86                                  section     .text
+    87                                  global _start
+    88                                  _start:
+    89                                  
+    90                                      cAvg    avg, lst
     16 00000000 4C8D05(00000000)    <1>  lea r8, [%2]
     17 00000007 B800000000          <1>  mov rax, 0
     18 0000000C 41B900000000        <1>  mov r9, 0
@@ -82,7 +102,7 @@
     26 00000027 668B1D(0A000000)    <1>  mov bx, [len]
     27 0000002E 66F7F3              <1>  div bx
     28 00000031 668905(0B000000)    <1>  mov [%1], ax
-    71                                      fMin    min, lst
+    91                                      fMin    min, lst
     34 00000038 4C8D05(00000000)    <1>  lea r8, [%2]
     35 0000003F 8A0D(0A000000)      <1>  mov cl, [len]
     36 00000045 41B900000000        <1>  mov r9, 0
@@ -98,8 +118,24 @@
     46 00000060 668905(0D000000)    <1>  mov [%1], ax
     47 00000067 EBF0                <1>  jmp %%incLoop
     48                              <1> %%done:
-    72                                  
-    73                                  exit:
-    74 00000069 B801000002                  mov     rax, SYS_exit
-    75 0000006E BF00000000                  mov     rdi, SUCCESS
-    76 00000073 0F05                        syscall
+    92                                      fMax    max, lst
+    54 00000069 4C8D05(00000000)    <1>  lea r8, [%2]
+    55 00000070 8A0D(0A000000)      <1>  mov cl, [len]
+    56 00000076 41B900000000        <1>  mov r9, 0
+    57                              <1> %%loopMax:
+    58 0000007C 66438B0448          <1>  mov ax, [r8 + r9*2]
+    59 00000081 663905(0F000000)    <1>  cmp [%1], ax
+    60 00000088 7C07                <1>  jl %%setMax
+    61                              <1> %%incLoop:
+    62 0000008A 49FFC1              <1>  inc r9
+    63 0000008D E2ED                <1>  loop %%loopMax
+    64 0000008F EB09                <1>  jmp %%done
+    65                              <1> %%setMax:
+    66 00000091 668905(0F000000)    <1>  mov [%1], ax
+    67 00000098 EBF0                <1>  jmp %%incLoop
+    68                              <1> %%done:
+    93                                  
+    94                                  exit:
+    95 0000009A B801000002                  mov     rax, SYS_exit
+    96 0000009F BF00000000                  mov     rdi, SUCCESS
+    97 000000A4 0F05                        syscall
