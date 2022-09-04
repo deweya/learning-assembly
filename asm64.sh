@@ -1,5 +1,7 @@
 #!/bin/bash
 # Simple assemble/link script
+# Used for standalone asm files that do not need to be linked with other files
+# For more complex compilation and linking, use the scripts included in the respective exercise's folder
 
 set -e
 
