@@ -20,21 +20,25 @@
     20                                  global stats1
     21                                  stats1:
     22                                  
-    23 00000000 4154                        push    r12                     ; Prologue
-    24 00000002 41BC00000000                mov     r12, 0
-    25 00000008 B800000000                  mov     eax, 0                  ; Saves the running sum
+    23 00000000 B800000000                  mov     rax, 0              ; Holds the running sum
+    24 00000005 41B800000000                mov     r8, 0               ; Helps with iterating
+    25 0000000B 4989D2                      mov     r10, rdx            ; Save array address, since div will wipe it out
     26                                  
     27                                  sumLoop:
     28                                  
-    29 0000000D 420304A7                    add     eax, [rdi + r12*4]
-    30 00000011 49FFC4                      inc     r12
-    31 00000014 FFCE                        dec     esi
-    32 00000016 83FE00                      cmp     esi, 0
-    33 00000019 7402                        je      exit
-    34 0000001B EBF0                        jmp     sumLoop
-    35                                  
-    36                                  exit:
-    37                                  
-    38 0000001D 488902                      mov     [rdx], rax
-    39 00000020 415C                        pop     r12                     ; Epilogue
-    40 00000022 C3                          ret
+    29 0000000E 42030487                    add     eax, [rdi + r8*4]
+    30 00000012 49FFC0                      inc     r8
+    31 00000015 4939F0                      cmp     r8, rsi
+    32 00000018 75F4                        jne     sumLoop
+    33 0000001A 4989C1                      mov     r9, rax             ; Store the sum in r9
+    34                                  
+    35                                  calcAvg:
+    36                                  
+    37 0000001D 99                          cdq                         ; Fancy way to zero out rdx for division
+    38 0000001E F7F6                        div     esi
+    39                                  
+    40                                  exit:
+    41                                  
+    42 00000020 4D890A                      mov     [r10], r9
+    43 00000023 488901                      mov     [rcx], rax
+    44 00000026 C3                          ret

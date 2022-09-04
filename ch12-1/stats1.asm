@@ -20,21 +20,25 @@ section     .text
 global stats1
 stats1:
 
-    push    r12                     ; Prologue
-    mov     r12, 0
-    mov     eax, 0                  ; Saves the running sum
+    mov     rax, 0              ; Holds the running sum
+    mov     r8, 0               ; Helps with iterating
+    mov     r10, rdx            ; Save array address, since div will wipe it out
 
 sumLoop:
 
-    add     eax, [rdi + r12*4]
-    inc     r12
-    dec     esi
-    cmp     esi, 0
-    je      exit
-    jmp     sumLoop
+    add     eax, [rdi + r8*4]
+    inc     r8
+    cmp     r8, rsi
+    jne     sumLoop
+    mov     r9, rax             ; Store the sum in r9
+
+calcAvg:
+
+    cdq                         ; Fancy way to zero out rdx for division
+    div     esi
 
 exit:
 
-    mov     [rdx], rax
-    pop     r12                     ; Epilogue
+    mov     [r10], r9
+    mov     [rcx], rax
     ret
