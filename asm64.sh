@@ -3,13 +3,6 @@
 
 set -e
 
-SYMBOL=""
-if [ -z $2 ]; then
-    SYMBOL="_start"
-else
-    SYMBOL=$2
-fi
-
 if [ -z $1 ]; then
     echo "Usage: ./asm64 <asmMinFile> (no extension)"
 fi
@@ -23,4 +16,4 @@ fi
 
 # Compile, assemble, and link
 nasm -Worphan-labels -g -F dwarf -f macho64 $1/$1.asm -l $1/$1.lst -o $1/$1.o
-ld -e $SYMBOL -static -o bin/$1 $1/$1.o
+ld -e _start -static -o bin/$1 $1/$1.o
