@@ -1,0 +1,40 @@
+     1                                  ; Chapter 12, exercise 1
+     2                                  ; Implement the "stats1" void function that does the following:
+     3                                  ;   * Finds the sum of a list of numbers
+     4                                  ;   * Finds the average of a list of numbers
+     5                                  
+     6                                  default rel
+     7                                  
+     8                                  ; *********************
+     9                                  
+    10                                  ; HLL call:
+    11                                  ;   stats1(arr, len, sum, ave);
+    12                                  ; -----
+    13                                  ; Arguments:
+    14                                  ;   arr, address        – rdi       ; dword
+    15                                  ;   len, dword value    – rsi       ; dword
+    16                                  ;   sum, address        – rdx       ; dword
+    17                                  ;   ave, address        - rcx       ; dword
+    18                                  
+    19                                  section     .text
+    20                                  global stats1
+    21                                  stats1:
+    22                                  
+    23 00000000 4154                        push    r12                     ; Prologue
+    24 00000002 41BC00000000                mov     r12, 0
+    25 00000008 B800000000                  mov     eax, 0                  ; Saves the running sum
+    26                                  
+    27                                  sumLoop:
+    28                                  
+    29 0000000D 420304A7                    add     eax, [rdi + r12*4]
+    30 00000011 49FFC4                      inc     r12
+    31 00000014 FFCE                        dec     esi
+    32 00000016 83FE00                      cmp     esi, 0
+    33 00000019 7402                        je      exit
+    34 0000001B EBF0                        jmp     sumLoop
+    35                                  
+    36                                  exit:
+    37                                  
+    38 0000001D 488902                      mov     [rdx], rax
+    39 00000020 415C                        pop     r12                     ; Epilogue
+    40 00000022 C3                          ret
