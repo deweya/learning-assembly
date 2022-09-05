@@ -23,6 +23,9 @@ section     .text
 global stats2
 stats2:
 
+    push    rbp
+    mov     rbp, rsp
+
     push    rbx
     push    r12
     push    r13
@@ -103,7 +106,13 @@ exit:
 
     mov     [r9], eax
 
+    cdq
+    div     esi
+    mov     r10, [rbp + 16]
+    mov     [r10], eax
+
     pop     r13
     pop     r12
     pop     rbx
+    pop     rbp
     ret

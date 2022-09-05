@@ -26,8 +26,6 @@ _start:
 
     lea     r10, [ave]
     push    r10
-    mov     rbp, rsp
-    push    rbp
 
     lea     r9, [sum]
     lea     r8, [max]

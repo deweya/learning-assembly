@@ -30,19 +30,17 @@
     26                                  
     27 00000000 4C8D15(40000000)            lea     r10, [ave]
     28 00000007 4152                        push    r10
-    29 00000009 4889E5                      mov     rbp, rsp
-    30 0000000C 55                          push    rbp
-    31                                  
-    32 0000000D 4C8D0D(3C000000)            lea     r9, [sum]
-    33 00000014 4C8D05(38000000)            lea     r8, [max]
-    34 0000001B 488D0D(34000000)            lea     rcx, [med]
-    35 00000022 488D15(30000000)            lea     rdx, [min]
-    36 00000029 8B35(2C000000)              mov     esi, [len]
-    37 0000002F 488D3D(00000000)            lea     rdi, [arr]
-    38 00000036 E8(00000000)                call    stats2
+    29                                  
+    30 00000009 4C8D0D(3C000000)            lea     r9, [sum]
+    31 00000010 4C8D05(38000000)            lea     r8, [max]
+    32 00000017 488D0D(34000000)            lea     rcx, [med]
+    33 0000001E 488D15(30000000)            lea     rdx, [min]
+    34 00000025 8B35(2C000000)              mov     esi, [len]
+    35 0000002B 488D3D(00000000)            lea     rdi, [arr]
+    36 00000032 E8(00000000)                call    stats2
+    37                                  
+    38                                  exit:
     39                                  
-    40                                  exit:
-    41                                  
-    42 0000003B B801000002                  mov     rax, SYS_exit
-    43 00000040 BF00000000                  mov     rdi, SUCCESS
-    44 00000045 0F05                        syscall
+    40 00000037 B801000002                  mov     rax, SYS_exit
+    41 0000003C BF00000000                  mov     rdi, SUCCESS
+    42 00000041 0F05                        syscall
