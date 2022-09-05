@@ -40,12 +40,18 @@ stats2:
 iter:
 
     mov     r12d, [rdi + r10*4]
+    push    r12                     ; push since r12 could be modified in setMed
     add     eax, r12d
     cmp     r10, rbx
     je      setMed
 
-endIter:
+checkMin:
 
+    pop     r12
+    cmp     [r11], r12d
+    jg      setMin
+
+endIter:
     inc     r10
     cmp     r10, rsi
     jne     iter
@@ -60,7 +66,7 @@ setMed:
 setMedOdd:
 
     mov     [rcx], r12d
-    jmp     endIter
+    jmp     checkMin
 
 setMedEven:
 
@@ -75,6 +81,11 @@ setMedEven:
     div     rbx
     mov     [rcx], eax
     pop     rax
+    jmp     checkMin
+
+setMin:
+
+    mov     [r11], r12
     jmp     endIter
 
 exit:

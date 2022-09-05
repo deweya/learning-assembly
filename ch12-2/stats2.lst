@@ -40,48 +40,59 @@
     40                                  iter:
     41                                  
     42 00000023 468B2497                    mov     r12d, [rdi + r10*4]
-    43 00000027 4401E0                      add     eax, r12d
-    44 0000002A 4939DA                      cmp     r10, rbx
-    45 0000002D 740A                        je      setMed
-    46                                  
-    47                                  endIter:
-    48                                  
-    49 0000002F 49FFC2                      inc     r10
-    50 00000032 4939F2                      cmp     r10, rsi
-    51 00000035 75EC                        jne     iter
-    52 00000037 EB2C                        jmp     exit
+    43 00000027 4154                        push    r12                     ; push since r12 could be modified in setMed
+    44 00000029 4401E0                      add     eax, r12d
+    45 0000002C 4939DA                      cmp     r10, rbx
+    46 0000002F 7411                        je      setMed
+    47                                  
+    48                                  checkMin:
+    49                                  
+    50 00000031 415C                        pop     r12
+    51 00000033 453923                      cmp     [r11], r12d
+    52 00000036 7F36                        jg      setMin
     53                                  
-    54                                  setMed:
-    55                                  
-    56 00000039 4883FA01                    cmp     rdx, 1                  ; If remainder is 1, then the med is the middle number
-    57 0000003D 7402                        je      setMedOdd
-    58 0000003F EB05                        jmp     setMedEven
+    54                                  endIter:
+    55 00000038 49FFC2                      inc     r10
+    56 0000003B 4939F2                      cmp     r10, rsi
+    57 0000003E 75E3                        jne     iter
+    58 00000040 EB31                        jmp     exit
     59                                  
-    60                                  setMedOdd:
+    60                                  setMed:
     61                                  
-    62 00000041 448921                      mov     [rcx], r12d
-    63 00000044 EBE9                        jmp     endIter
-    64                                  
-    65                                  setMedEven:
-    66                                  
-    67 00000046 50                          push    rax
-    68 00000047 49FFCA                      dec     r10
-    69 0000004A 468B2C97                    mov     r13d, [rdi + r10*4]
-    70 0000004E 49FFC2                      inc     r10
-    71 00000051 4501EC                      add     r12d, r13d
-    72 00000054 99                          cdq
-    73 00000055 4489E0                      mov     eax, r12d
-    74 00000058 BB02000000                  mov     rbx, 2
-    75 0000005D 48F7F3                      div     rbx
-    76 00000060 8901                        mov     [rcx], eax
-    77 00000062 58                          pop     rax
-    78 00000063 EBCA                        jmp     endIter
-    79                                  
-    80                                  exit:
-    81                                  
-    82 00000065 418901                      mov     [r9], eax
-    83                                  
-    84 00000068 415D                        pop     r13
-    85 0000006A 415C                        pop     r12
-    86 0000006C 5B                          pop     rbx
-    87 0000006D C3                          ret
+    62 00000042 4883FA01                    cmp     rdx, 1                  ; If remainder is 1, then the med is the middle number
+    63 00000046 7402                        je      setMedOdd
+    64 00000048 EB05                        jmp     setMedEven
+    65                                  
+    66                                  setMedOdd:
+    67                                  
+    68 0000004A 448921                      mov     [rcx], r12d
+    69 0000004D EBE2                        jmp     checkMin
+    70                                  
+    71                                  setMedEven:
+    72                                  
+    73 0000004F 50                          push    rax
+    74 00000050 49FFCA                      dec     r10
+    75 00000053 468B2C97                    mov     r13d, [rdi + r10*4]
+    76 00000057 49FFC2                      inc     r10
+    77 0000005A 4501EC                      add     r12d, r13d
+    78 0000005D 99                          cdq
+    79 0000005E 4489E0                      mov     eax, r12d
+    80 00000061 BB02000000                  mov     rbx, 2
+    81 00000066 48F7F3                      div     rbx
+    82 00000069 8901                        mov     [rcx], eax
+    83 0000006B 58                          pop     rax
+    84 0000006C EBC3                        jmp     checkMin
+    85                                  
+    86                                  setMin:
+    87                                  
+    88 0000006E 4D8923                      mov     [r11], r12
+    89 00000071 EBC5                        jmp     endIter
+    90                                  
+    91                                  exit:
+    92                                  
+    93 00000073 418901                      mov     [r9], eax
+    94                                  
+    95 00000076 415D                        pop     r13
+    96 00000078 415C                        pop     r12
+    97 0000007A 5B                          pop     rbx
+    98 0000007B C3                          ret
