@@ -9,9 +9,9 @@ SUCCESS     equ     0
 SYS_exit    equ     0x2000001
 
 arr         dd      1000, 1010, 1020, 1030, 1040
-            dd      1050, 1060, 1070, 1080, 1090
+            dd      1050, 1060, 1070, 1080, 1090, 1100
 
-len         dd      10
+len         dd      11
 min         dd      0
 med         dd      0
 max         dd      0

@@ -25,40 +25,63 @@
     25                                  
     26 00000000 53                          push    rbx
     27 00000001 4154                        push    r12
-    28                                  
-    29 00000003 BB02000000                  mov     rbx, 2
-    30                                  
-    31 00000008 41BA00000000                mov     r10, 0
-    32 0000000E 4989D3                      mov     r11, rdx                ; Save addr of rdx
-    33 00000011 89F0                        mov     eax, esi
-    34 00000013 BA00000000                  mov     rdx, 0
-    35 00000018 F7F3                        div     ebx
-    36 0000001A 89C3                        mov     ebx, eax                ; ebx contains the index of the median
-    37 0000001C B800000000                  mov     eax, 0                  ; Now eax will store the sum
-    38                                  
-    39                                  iter:
-    40                                  
-    41 00000021 468B2497                    mov     r12d, [rdi + r10*4]
-    42 00000025 4401E0                      add     eax, r12d
-    43 00000028 4939DA                      cmp     r10, rbx
-    44 0000002B 740A                        je      setMed
-    45                                  
-    46                                  endIter:
-    47                                  
-    48 0000002D 49FFC2                      inc     r10
-    49 00000030 4939F2                      cmp     r10, rsi
-    50 00000033 75EC                        jne     iter
-    51 00000035 EB05                        jmp     exit
-    52                                  
-    53                                  setMed:
-    54                                  
-    55 00000037 448921                      mov     [rcx], r12d
-    56 0000003A EBF1                        jmp     endIter
-    57                                  
-    58                                  exit:
+    28 00000003 4155                        push    r13
+    29                                  
+    30 00000005 BB02000000                  mov     rbx, 2
+    31                                  
+    32 0000000A 41BA00000000                mov     r10, 0
+    33 00000010 4989D3                      mov     r11, rdx                ; Save addr of rdx
+    34 00000013 89F0                        mov     eax, esi
+    35 00000015 BA00000000                  mov     rdx, 0
+    36 0000001A F7F3                        div     ebx
+    37 0000001C 89C3                        mov     ebx, eax                ; ebx contains the index of the median
+    38 0000001E B800000000                  mov     eax, 0                  ; Now eax will store the sum
+    39                                  
+    40                                  iter:
+    41                                  
+    42 00000023 468B2497                    mov     r12d, [rdi + r10*4]
+    43 00000027 4401E0                      add     eax, r12d
+    44 0000002A 4939DA                      cmp     r10, rbx
+    45 0000002D 740A                        je      setMed
+    46                                  
+    47                                  endIter:
+    48                                  
+    49 0000002F 49FFC2                      inc     r10
+    50 00000032 4939F2                      cmp     r10, rsi
+    51 00000035 75EC                        jne     iter
+    52 00000037 EB2C                        jmp     exit
+    53                                  
+    54                                  setMed:
+    55                                  
+    56 00000039 4883FA01                    cmp     rdx, 1                  ; If remainder is 1, then the med is the middle number
+    57 0000003D 7402                        je      setMedOdd
+    58 0000003F EB05                        jmp     setMedEven
     59                                  
-    60 0000003C 418901                      mov     [r9], eax
+    60                                  setMedOdd:
     61                                  
-    62 0000003F 415C                        pop     r12
-    63 00000041 5B                          pop     rbx
-    64 00000042 C3                          ret
+    62 00000041 448921                      mov     [rcx], r12d
+    63 00000044 EBE9                        jmp     endIter
+    64                                  
+    65                                  setMedEven:
+    66                                  
+    67 00000046 50                          push    rax
+    68 00000047 49FFCA                      dec     r10
+    69 0000004A 468B2C97                    mov     r13d, [rdi + r10*4]
+    70 0000004E 49FFC2                      inc     r10
+    71 00000051 4501EC                      add     r12d, r13d
+    72 00000054 99                          cdq
+    73 00000055 4489E0                      mov     eax, r12d
+    74 00000058 BB02000000                  mov     rbx, 2
+    75 0000005D 48F7F3                      div     rbx
+    76 00000060 8901                        mov     [rcx], eax
+    77 00000062 58                          pop     rax
+    78 00000063 EBCA                        jmp     endIter
+    79                                  
+    80                                  exit:
+    81                                  
+    82 00000065 418901                      mov     [r9], eax
+    83                                  
+    84 00000068 415D                        pop     r13
+    85 0000006A 415C                        pop     r12
+    86 0000006C 5B                          pop     rbx
+    87 0000006D C3                          ret

@@ -25,6 +25,7 @@ stats2:
 
     push    rbx
     push    r12
+    push    r13
 
     mov     rbx, 2
 
@@ -52,13 +53,35 @@ endIter:
 
 setMed:
 
+    cmp     rdx, 1                  ; If remainder is 1, then the med is the middle number
+    je      setMedOdd
+    jmp     setMedEven
+
+setMedOdd:
+
     mov     [rcx], r12d
+    jmp     endIter
+
+setMedEven:
+
+    push    rax
+    dec     r10
+    mov     r13d, [rdi + r10*4]
+    inc     r10
+    add     r12d, r13d
+    cdq
+    mov     eax, r12d
+    mov     rbx, 2
+    div     rbx
+    mov     [rcx], eax
+    pop     rax
     jmp     endIter
 
 exit:
 
     mov     [r9], eax
 
+    pop     r13
     pop     r12
     pop     rbx
     ret
