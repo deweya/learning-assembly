@@ -51,7 +51,13 @@ checkMin:
     cmp     [r11], r12d
     jg      setMin
 
+checkMax:
+
+    cmp     [r8], r12d
+    jl      setMax
+
 endIter:
+
     inc     r10
     cmp     r10, rsi
     jne     iter
@@ -86,6 +92,11 @@ setMedEven:
 setMin:
 
     mov     [r11], r12
+    jmp     checkMax
+
+setMax:
+
+    mov     [r8], r12
     jmp     endIter
 
 exit:
