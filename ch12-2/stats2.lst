@@ -1,0 +1,64 @@
+     1                                  ; Chapter 12, exercise 2
+     2                                  ; Implement the stats2 function that does the following:
+     3                                  ;   * Finds the median of a list of numbers
+     4                                  ;   * Finds the min and max of a list of numbers
+     5                                  ;   * Finds the sum of a list of numbers
+     6                                  ;   * Finds the average of a list of numbers
+     7                                  
+     8                                  default rel
+     9                                  
+    10                                  ; HLL call:
+    11                                  ;   stats2(arr, len, min, med, max, sum, ave);
+    12                                  ; -----
+    13                                  ; Arguments:
+    14                                  ;   arr, address        – rdi
+    15                                  ;   len, dword value    – esi
+    16                                  ;   min, address        - rdx
+    17                                  ;   med, address        - rcx
+    18                                  ;   max, address        - r8
+    19                                  ;   sum, address        - r9
+    20                                  ;   ave, address        - rbp + 16
+    21                                  
+    22                                  section     .text
+    23                                  global stats2
+    24                                  stats2:
+    25                                  
+    26 00000000 53                          push    rbx
+    27 00000001 4154                        push    r12
+    28                                  
+    29 00000003 BB02000000                  mov     rbx, 2
+    30                                  
+    31 00000008 41BA00000000                mov     r10, 0
+    32 0000000E 4989D3                      mov     r11, rdx                ; Save addr of rdx
+    33 00000011 89F0                        mov     eax, esi
+    34 00000013 BA00000000                  mov     rdx, 0
+    35 00000018 F7F3                        div     ebx
+    36 0000001A 89C3                        mov     ebx, eax                ; ebx contains the index of the median
+    37 0000001C B800000000                  mov     eax, 0                  ; Now eax will store the sum
+    38                                  
+    39                                  iter:
+    40                                  
+    41 00000021 468B2497                    mov     r12d, [rdi + r10*4]
+    42 00000025 4401E0                      add     eax, r12d
+    43 00000028 4939DA                      cmp     r10, rbx
+    44 0000002B 740A                        je      setMed
+    45                                  
+    46                                  endIter:
+    47                                  
+    48 0000002D 49FFC2                      inc     r10
+    49 00000030 4939F2                      cmp     r10, rsi
+    50 00000033 75EC                        jne     iter
+    51 00000035 EB05                        jmp     exit
+    52                                  
+    53                                  setMed:
+    54                                  
+    55 00000037 448921                      mov     [rcx], r12d
+    56 0000003A EBF1                        jmp     endIter
+    57                                  
+    58                                  exit:
+    59                                  
+    60 0000003C 418901                      mov     [r9], eax
+    61                                  
+    62 0000003F 415C                        pop     r12
+    63 00000041 5B                          pop     rbx
+    64 00000042 C3                          ret
