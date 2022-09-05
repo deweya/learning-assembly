@@ -38,9 +38,10 @@
     34 00000025 8B35(2C000000)              mov     esi, [len]
     35 0000002B 488D3D(00000000)            lea     rdi, [arr]
     36 00000032 E8(00000000)                call    stats2
-    37                                  
-    38                                  exit:
-    39                                  
-    40 00000037 B801000002                  mov     rax, SYS_exit
-    41 0000003C BF00000000                  mov     rdi, SUCCESS
-    42 00000041 0F05                        syscall
+    37 00000037 4883C408                    add     rsp, 8              ; Clear pushed arguments
+    38                                  
+    39                                  exit:
+    40                                  
+    41 0000003B B801000002                  mov     rax, SYS_exit
+    42 00000040 BF00000000                  mov     rdi, SUCCESS
+    43 00000045 0F05                        syscall

@@ -34,6 +34,7 @@ _start:
     mov     esi, [len]
     lea     rdi, [arr]
     call    stats2
+    add     rsp, 8              ; Clear pushed arguments
 
 exit:
 
