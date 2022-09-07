@@ -1,3 +1,4 @@
+; Example from Chapter 13.3.1
 ; Print messages to the console
 
 default rel
@@ -26,6 +27,12 @@ global _start
 _start:
 
     lea     rdi, [message1]
+    call    printString
+
+    lea     rdi, [message2]
+    call    printString
+
+    lea     rdi, [message3]
     call    printString
 
 exit:

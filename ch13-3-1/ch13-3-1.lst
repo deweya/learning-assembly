@@ -1,71 +1,78 @@
-     1                                  ; Print messages to the console
-     2                                  
-     3                                  default rel
-     4                                  
-     5                                  %define     SUCCESS         0
-     6                                  %define     SYS_exit        0x2000001
-     7                                  %define     SYS_write       0x2000004
-     8                                  
-     9                                  %define     STDOUT          1
-    10                                  
-    11                                  %define     LF              10
-    12                                  %define     NULL            0
-    13                                  
-    14                                  ; ***************************
-    15                                  
-    16                                  section     .data
-    17                                  
-    18 00000000 48656C6C6F2C20776F-     message1    db      "Hello, world!", LF, NULL
-    18 00000009 726C64210A00       
-    19 0000000F 596F2C20796F2C2079-     message2    db      "Yo, yo, yo!", LF, NULL
-    19 00000018 6F210A00           
-    20 0000001C 4865792C207927616C-     message3    db      "Hey, y'all!", LF, NULL
-    20 00000025 6C210A00           
-    21                                  
-    22                                  ; ***************************
-    23                                  
-    24                                  section     .text
-    25                                  global _start
-    26                                  _start:
-    27                                  
-    28 00000000 488D3D(00000000)            lea     rdi, [message1]
-    29 00000007 E80C000000                  call    printString
-    30                                  
-    31                                  exit:
-    32 0000000C B801000002                  mov     rax, SYS_exit
-    33 00000011 BF00000000                  mov     rdi, SUCCESS
-    34 00000016 0F05                        syscall
-    35                                  
-    36                                  ; -----
-    37                                  ; Prints a string to the console
-    38                                  ; Args:
-    39                                  ;   * rdi - message (address)
-    40                                  ; Syscall:
-    41                                  ;   ssize_t
-    42                                  ;   write(int fildes, const void *buf, size_t nbyte);
-    43                                  ;         rdi         rsi              rdx
-    44                                  
-    45                                  global printString
-    46                                  printString:
-    47                                  
-    48 00000018 B804000002                  mov     rax, SYS_write
-    49 0000001D BA00000000                  mov     rdx, 0                  ; 3rd arg
-    50 00000022 4889FE                      mov     rsi, rdi                ; 2nd arg
-    51 00000025 BF01000000                  mov     rdi, STDOUT             ; 1st arg
-    52                                  
-    53 0000002A 4989F2                      mov     r10, rsi                ; use r10 to iterate so we don't knock rsi off
+     1                                  ; Example from Chapter 13.3.1
+     2                                  ; Print messages to the console
+     3                                  
+     4                                  default rel
+     5                                  
+     6                                  %define     SUCCESS         0
+     7                                  %define     SYS_exit        0x2000001
+     8                                  %define     SYS_write       0x2000004
+     9                                  
+    10                                  %define     STDOUT          1
+    11                                  
+    12                                  %define     LF              10
+    13                                  %define     NULL            0
+    14                                  
+    15                                  ; ***************************
+    16                                  
+    17                                  section     .data
+    18                                  
+    19 00000000 48656C6C6F2C20776F-     message1    db      "Hello, world!", LF, NULL
+    19 00000009 726C64210A00       
+    20 0000000F 596F2C20796F2C2079-     message2    db      "Yo, yo, yo!", LF, NULL
+    20 00000018 6F210A00           
+    21 0000001C 4865792C207927616C-     message3    db      "Hey, y'all!", LF, NULL
+    21 00000025 6C210A00           
+    22                                  
+    23                                  ; ***************************
+    24                                  
+    25                                  section     .text
+    26                                  global _start
+    27                                  _start:
+    28                                  
+    29 00000000 488D3D(00000000)            lea     rdi, [message1]
+    30 00000007 E824000000                  call    printString
+    31                                  
+    32 0000000C 488D3D(0F000000)            lea     rdi, [message2]
+    33 00000013 E818000000                  call    printString
+    34                                  
+    35 00000018 488D3D(1C000000)            lea     rdi, [message3]
+    36 0000001F E80C000000                  call    printString
+    37                                  
+    38                                  exit:
+    39 00000024 B801000002                  mov     rax, SYS_exit
+    40 00000029 BF00000000                  mov     rdi, SUCCESS
+    41 0000002E 0F05                        syscall
+    42                                  
+    43                                  ; -----
+    44                                  ; Prints a string to the console
+    45                                  ; Args:
+    46                                  ;   * rdi - message (address)
+    47                                  ; Syscall:
+    48                                  ;   ssize_t
+    49                                  ;   write(int fildes, const void *buf, size_t nbyte);
+    50                                  ;         rdi         rsi              rdx
+    51                                  
+    52                                  global printString
+    53                                  printString:
     54                                  
-    55                                  getLength:
-    56                                  
-    57                                      ; Get the length of the string so we know how many bytes to read from the buffer
-    58                                  
-    59 0000002D 41803A00                    cmp     byte [r10], NULL
-    60 00000031 7408                        je      doPrint
-    61 00000033 49FFC2                      inc     r10                     ; increase the pointer one byte
-    62 00000036 48FFC2                      inc     rdx                     ; increase the size of nbytes
-    63 00000039 EBF2                        jmp     getLength
-    64                                  
-    65                                  doPrint:
-    66                                  
-    67 0000003B 0F05                        syscall
-    68 0000003D C3                          ret
+    55 00000030 B804000002                  mov     rax, SYS_write
+    56 00000035 BA00000000                  mov     rdx, 0                  ; 3rd arg
+    57 0000003A 4889FE                      mov     rsi, rdi                ; 2nd arg
+    58 0000003D BF01000000                  mov     rdi, STDOUT             ; 1st arg
+    59                                  
+    60 00000042 4989F2                      mov     r10, rsi                ; use r10 to iterate so we don't knock rsi off
+    61                                  
+    62                                  getLength:
+    63                                  
+    64                                      ; Get the length of the string so we know how many bytes to read from the buffer
+    65                                  
+    66 00000045 41803A00                    cmp     byte [r10], NULL
+    67 00000049 7408                        je      doPrint
+    68 0000004B 49FFC2                      inc     r10                     ; increase the pointer one byte
+    69 0000004E 48FFC2                      inc     rdx                     ; increase the size of nbytes
+    70 00000051 EBF2                        jmp     getLength
+    71                                  
+    72                                  doPrint:
+    73                                  
+    74 00000053 0F05                        syscall
+    75 00000055 C3                          ret
