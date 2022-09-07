@@ -1,26 +1,25 @@
-; Example from Chapter 13.3.1
-; A program to print a set of messages to the console
+; Print messages to the console
 
 default rel
 
-; ******************************
+%define     SUCCESS         0
+%define     SYS_exit        0x2000001
+%define     SYS_write       0x2000004
+
+%define     STDOUT          1
+
+%define     LF              10
+%define     NULL            0
+
+; ***************************
 
 section     .data
 
-SUCCESS     equ     0
-SYS_exit    equ     0x2000001
-
-STDOUT      equ     1
-SYS_write   equ     0x2000004
-
-LF          equ     10
-NULL        equ     0
-
 message1    db      "Hello, world!", LF, NULL
-message2    db      "Yo yo yo!", LF, NULL
-message3    db      "Foo bar baz", LF, NULL
+message2    db      "Yo, yo, yo!", LF, NULL
+message3    db      "Hey, y'all!", LF, NULL
 
-; ******************************
+; ***************************
 
 section     .text
 global _start
@@ -30,7 +29,6 @@ _start:
     call    printString
 
 exit:
-
     mov     rax, SYS_exit
     mov     rdi, SUCCESS
     syscall
@@ -44,7 +42,7 @@ exit:
 ;   write(int fildes, const void *buf, size_t nbyte);
 ;         rdi         rsi              rdx
 
-global printString:
+global printString
 printString:
 
     mov     rax, SYS_write
@@ -52,13 +50,15 @@ printString:
     mov     rsi, rdi                ; 2nd arg
     mov     rdi, STDOUT             ; 1st arg
 
+    mov     r10, rsi                ; use r10 to iterate so we don't knock rsi off
+
 getLength:
 
     ; Get the length of the string so we know how many bytes to read from the buffer
 
-    cmp     rsi, NULL
+    cmp     byte [r10], NULL
     je      doPrint
-    inc     rsi                     ; increase the pointer one byte
+    inc     r10                     ; increase the pointer one byte
     inc     rdx                     ; increase the size of nbytes
     jmp     getLength
 
