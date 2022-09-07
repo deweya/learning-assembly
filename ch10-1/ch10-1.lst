@@ -48,7 +48,7 @@
     48                                  convert:
     49                                  
     50 00000028 58                          pop     rax
-    51 00000029 0430                        add     al, 48
+    51 00000029 0430                        add     al, 48                  ; 48 is ascii 0
     52 0000002B 43880408                    mov     [r8 + r9], al
     53 0000002F 49FFC1                      inc     r9
     54 00000032 E2F4                        loop    convert
