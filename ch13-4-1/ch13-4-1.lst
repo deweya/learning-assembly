@@ -1,0 +1,133 @@
+     1                                  ; Chapter 13.4.1
+     2                                  ; Accept input from the console
+     3                                  ; Then print the input back out to the console when LF is reached
+     4                                  
+     5                                  default rel
+     6                                  
+     7                                  %define     SYS_exit        0x2000001
+     8                                  %define     SYS_read        0x2000003
+     9                                  %define     SYS_write       0x2000004
+    10                                  
+    11                                  %define     SUCCESS         0
+    12                                  %define     STDIN           0
+    13                                  %define     STDOUT          1
+    14                                  %define     LF              10
+    15                                  %define     NULL            0
+    16                                  
+    17                                  %define     STRLEN          50
+    18                                  
+    19                                  ; **********************************
+    20                                  
+    21                                  section     .data
+    22                                  
+    23 00000000 456E746572206D6573-     prompt      db          "Enter message:", LF, NULL
+    23 00000009 736167653A0A00     
+    24 00000010 32                      length      db          STRLEN                              ; Length of input to read from console (excluding LF and NULL)
+    25                                  
+    26                                  ; **********************************
+    27                                  
+    28                                  section     .bss
+    29                                  
+    30 00000000 ??                      char        resb        1                                   ; Individual character to read from input
+    31 00000001 <res 34h>               input       resb        STRLEN+2                            ; Console input (including LF and NULL)
+    32                                  
+    33                                  ; **********************************
+    34                                  
+    35                                  section     .text
+    36                                  global _start
+    37                                  _start:
+    38                                  
+    39 00000000 488D3D(00000000)            lea     rdi, [prompt]
+    40 00000007 E861000000                  call    printString
+    41                                  
+    42 0000000C 488D3D(01000000)            lea     rdi, [input]
+    43 00000013 488B35(10000000)            mov     rsi, [length]
+    44 0000001A E80C000000                  call    readInput
+    45                                  
+    46                                  exit:
+    47 0000001F B801000002                  mov     rax, SYS_exit
+    48 00000024 BF00000000                  mov     rdi, SUCCESS
+    49 00000029 0F05                        syscall
+    50                                  
+    51                                  ; -----
+    52                                  ; Read input from STDIN
+    53                                  ; Reads one char at a time until either:
+    54                                  ;   * LF has been hit
+    55                                  ;   * Max string length has been hit
+    56                                  ; Args:
+    57                                  ;   * rdi - input (address)
+    58                                  ;   * rsi - length (byte)
+    59                                  ; Syscall:
+    60                                  ;   ssize_t
+    61                                  ;   read(int fildes, void *buf, size_t nbyte);
+    62                                  ;        rdi         rsi        rdx
+    63                                  
+    64                                  global readInput
+    65                                  readInput:
+    66                                  
+    67 0000002B 4989F8                      mov     r8, rdi
+    68 0000002E 4989F1                      mov     r9, rsi
+    69 00000031 41BA00000000                mov     r10, 0                                  ; char counter and iterator
+    70                                  
+    71 00000037 BF00000000                  mov     rdi, STDIN
+    72 0000003C BA01000000                  mov     rdx, 1
+    73                                  
+    74                                  readInputLoop:
+    75                                  
+    76 00000041 B803000002                  mov     rax, SYS_read
+    77 00000046 488D35(00000000)            lea     rsi, [char]
+    78 0000004D 0F05                        syscall
+    79                                  
+    80 0000004F 803E0A                      cmp     byte [rsi], LF
+    81 00000052 7418                        je      readInputDone
+    82                                  
+    83 00000054 4C8B1E                      mov     r11, [rsi]
+    84 00000057 4F891C10                    mov     [r8 + r10], r11
+    85                                  
+    86 0000005B C605(00000000)00            mov     byte [char], 0
+    87                                  
+    88 00000062 49FFC2                      inc     r10
+    89 00000065 4D39CA                      cmp     r10, r9
+    90 00000068 7D02                        jge     readInputDone
+    91                                  
+    92 0000006A EBD5                        jmp     readInputLoop
+    93                                  
+    94                                  readInputDone:
+    95                                  
+    96 0000006C C3                          ret
+    97                                  
+    98                                  ; -----
+    99                                  ; Prints a string to the console
+   100                                  ; Args:
+   101                                  ;   * rdi - message (address)
+   102                                  ; Returns:
+   103                                  ;   * rax - number of bytes written to the console
+   104                                  ; Syscall:
+   105                                  ;   ssize_t
+   106                                  ;   write(int fildes, const void *buf, size_t nbyte);
+   107                                  ;         rdi         rsi              rdx
+   108                                  
+   109                                  global printString
+   110                                  printString:
+   111                                  
+   112 0000006D B804000002                  mov     rax, SYS_write
+   113 00000072 BA00000000                  mov     rdx, 0                  ; 3rd arg
+   114 00000077 4889FE                      mov     rsi, rdi                ; 2nd arg
+   115 0000007A BF01000000                  mov     rdi, STDOUT             ; 1st arg
+   116                                  
+   117 0000007F 4989F2                      mov     r10, rsi                ; use r10 to iterate so we don't knock rsi off
+   118                                  
+   119                                  getLength:
+   120                                  
+   121                                      ; Get the length of the string so we know how many bytes to read from the buffer
+   122                                  
+   123 00000082 41803A00                    cmp     byte [r10], NULL
+   124 00000086 7408                        je      doPrint
+   125 00000088 49FFC2                      inc     r10                     ; increase the pointer one byte
+   126 0000008B 48FFC2                      inc     rdx                     ; increase the size of nbytes
+   127 0000008E EBF2                        jmp     getLength
+   128                                  
+   129                                  doPrint:
+   130                                  
+   131 00000090 0F05                        syscall
+   132 00000092 C3                          ret
