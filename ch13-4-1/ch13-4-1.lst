@@ -38,7 +38,7 @@
     37                                  _start:
     38                                  
     39 00000000 488D3D(00000000)            lea     rdi, [prompt]
-    40 00000007 E861000000                  call    printString
+    40 00000007 E85B000000                  call    printString
     41                                  
     42 0000000C 488D3D(01000000)            lea     rdi, [input]
     43 00000013 488B35(10000000)            mov     rsi, [length]
@@ -65,69 +65,66 @@
     64                                  global readInput
     65                                  readInput:
     66                                  
-    67 0000002B 4989F8                      mov     r8, rdi
-    68 0000002E 4989F1                      mov     r9, rsi
+    67 0000002B 4989F8                      mov     r8, rdi                                 ; input
+    68 0000002E 4989F1                      mov     r9, rsi                                 ; length
     69 00000031 41BA00000000                mov     r10, 0                                  ; char counter and iterator
     70                                  
-    71 00000037 BF00000000                  mov     rdi, STDIN
-    72 0000003C BA01000000                  mov     rdx, 1
-    73                                  
-    74                                  readInputLoop:
-    75                                  
-    76 00000041 B803000002                  mov     rax, SYS_read
-    77 00000046 488D35(00000000)            lea     rsi, [char]
-    78 0000004D 0F05                        syscall
-    79                                  
-    80 0000004F 803E0A                      cmp     byte [rsi], LF
-    81 00000052 7418                        je      readInputDone
-    82                                  
-    83 00000054 4C8B1E                      mov     r11, [rsi]
-    84 00000057 4F891C10                    mov     [r8 + r10], r11
-    85                                  
-    86 0000005B C605(00000000)00            mov     byte [char], 0
-    87                                  
-    88 00000062 49FFC2                      inc     r10
-    89 00000065 4D39CA                      cmp     r10, r9
-    90 00000068 7D02                        jge     readInputDone
-    91                                  
-    92 0000006A EBD5                        jmp     readInputLoop
-    93                                  
-    94                                  readInputDone:
-    95                                  
-    96 0000006C C3                          ret
-    97                                  
-    98                                  ; -----
-    99                                  ; Prints a string to the console
-   100                                  ; Args:
-   101                                  ;   * rdi - message (address)
-   102                                  ; Returns:
-   103                                  ;   * rax - number of bytes written to the console
-   104                                  ; Syscall:
-   105                                  ;   ssize_t
-   106                                  ;   write(int fildes, const void *buf, size_t nbyte);
-   107                                  ;         rdi         rsi              rdx
+    71                                  readInputLoop:
+    72                                  
+    73 00000037 B803000002                  mov     rax, SYS_read
+    74 0000003C BF00000000                  mov     rdi, STDIN
+    75 00000041 488D35(00000000)            lea     rsi, [char]
+    76 00000048 BA01000000                  mov     rdx, 1
+    77 0000004D 0F05                        syscall
+    78                                  
+    79 0000004F 803E0A                      cmp     byte [rsi], LF
+    80 00000052 7412                        je      readInputDone
+    81                                  
+    82 00000054 4C0FB61E                    movzx     r11, byte [rsi]
+    83 00000058 4F891C10                    mov     [r8 + r10], r11
+    84                                  
+    85 0000005C 49FFC2                      inc     r10
+    86 0000005F 4D39CA                      cmp     r10, r9
+    87 00000062 7D02                        jge     readInputDone
+    88                                  
+    89 00000064 EBD1                        jmp     readInputLoop
+    90                                  
+    91                                  readInputDone:
+    92                                  
+    93 00000066 C3                          ret
+    94                                  
+    95                                  ; -----
+    96                                  ; Prints a string to the console
+    97                                  ; Args:
+    98                                  ;   * rdi - message (address)
+    99                                  ; Returns:
+   100                                  ;   * rax - number of bytes written to the console
+   101                                  ; Syscall:
+   102                                  ;   ssize_t
+   103                                  ;   write(int fildes, const void *buf, size_t nbyte);
+   104                                  ;         rdi         rsi              rdx
+   105                                  
+   106                                  global printString
+   107                                  printString:
    108                                  
-   109                                  global printString
-   110                                  printString:
-   111                                  
-   112 0000006D B804000002                  mov     rax, SYS_write
-   113 00000072 BA00000000                  mov     rdx, 0                  ; 3rd arg
-   114 00000077 4889FE                      mov     rsi, rdi                ; 2nd arg
-   115 0000007A BF01000000                  mov     rdi, STDOUT             ; 1st arg
-   116                                  
-   117 0000007F 4989F2                      mov     r10, rsi                ; use r10 to iterate so we don't knock rsi off
-   118                                  
-   119                                  getLength:
-   120                                  
-   121                                      ; Get the length of the string so we know how many bytes to read from the buffer
-   122                                  
-   123 00000082 41803A00                    cmp     byte [r10], NULL
-   124 00000086 7408                        je      doPrint
-   125 00000088 49FFC2                      inc     r10                     ; increase the pointer one byte
-   126 0000008B 48FFC2                      inc     rdx                     ; increase the size of nbytes
-   127 0000008E EBF2                        jmp     getLength
-   128                                  
-   129                                  doPrint:
-   130                                  
-   131 00000090 0F05                        syscall
-   132 00000092 C3                          ret
+   109 00000067 B804000002                  mov     rax, SYS_write
+   110 0000006C BA00000000                  mov     rdx, 0                  ; 3rd arg
+   111 00000071 4889FE                      mov     rsi, rdi                ; 2nd arg
+   112 00000074 BF01000000                  mov     rdi, STDOUT             ; 1st arg
+   113                                  
+   114 00000079 4989F2                      mov     r10, rsi                ; use r10 to iterate so we don't knock rsi off
+   115                                  
+   116                                  getLength:
+   117                                  
+   118                                      ; Get the length of the string so we know how many bytes to read from the buffer
+   119                                  
+   120 0000007C 41803A00                    cmp     byte [r10], NULL
+   121 00000080 7408                        je      doPrint
+   122 00000082 49FFC2                      inc     r10                     ; increase the pointer one byte
+   123 00000085 48FFC2                      inc     rdx                     ; increase the size of nbytes
+   124 00000088 EBF2                        jmp     getLength
+   125                                  
+   126                                  doPrint:
+   127                                  
+   128 0000008A 0F05                        syscall
+   129 0000008C C3                          ret

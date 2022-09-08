@@ -64,23 +64,22 @@ exit:
 global readInput
 readInput:
 
-    mov     r8, rdi
-    mov     r9, rsi
+    mov     r8, rdi                                 ; input
+    mov     r9, rsi                                 ; length
     mov     r10, 0                                  ; char counter and iterator
-
-    mov     rdi, STDIN
-    mov     rdx, 1
 
 readInputLoop:
 
     mov     rax, SYS_read
+    mov     rdi, STDIN
     lea     rsi, [char]
+    mov     rdx, 1
     syscall
 
     cmp     byte [rsi], LF
     je      readInputDone
 
-    mov     r11, [rsi]
+    movzx   r11, byte [rsi]
     mov     [r8 + r10], r11
 
     inc     r10
