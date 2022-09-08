@@ -21,6 +21,7 @@ default rel
 section     .data
 
 prompt      db          "Enter message:", LF, NULL
+yourMsg     db          "Here was your message:", LF, NULL
 length      db          STRLEN                              ; Length of input to read from console (excluding LF and NULL)
 
 ; **********************************
@@ -89,6 +90,12 @@ readInputLoop:
     jmp     readInputLoop
 
 readInputDone:
+
+    lea     rdi, [yourMsg]
+    call    printString
+
+    lea     rdi, [r8]
+    call    printString
 
     ret
 

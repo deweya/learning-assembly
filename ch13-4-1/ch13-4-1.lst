@@ -22,109 +22,118 @@
     22                                  
     23 00000000 456E746572206D6573-     prompt      db          "Enter message:", LF, NULL
     23 00000009 736167653A0A00     
-    24 00000010 32                      length      db          STRLEN                              ; Length of input to read from console (excluding LF and NULL)
-    25                                  
-    26                                  ; **********************************
-    27                                  
-    28                                  section     .bss
-    29                                  
-    30 00000000 ??                      char        resb        1                                   ; Individual character to read from input
-    31 00000001 <res 34h>               input       resb        STRLEN+2                            ; Console input (including LF and NULL)
-    32                                  
-    33                                  ; **********************************
-    34                                  
-    35                                  section     .text
-    36                                  global _start
-    37                                  _start:
-    38                                  
-    39 00000000 488D3D(00000000)            lea     rdi, [prompt]
-    40 00000007 E85B000000                  call    printString
-    41                                  
-    42 0000000C 488D3D(01000000)            lea     rdi, [input]
-    43 00000013 488B35(10000000)            mov     rsi, [length]
-    44 0000001A E80C000000                  call    readInput
-    45                                  
-    46                                  exit:
-    47 0000001F B801000002                  mov     rax, SYS_exit
-    48 00000024 BF00000000                  mov     rdi, SUCCESS
-    49 00000029 0F05                        syscall
-    50                                  
-    51                                  ; -----
-    52                                  ; Read input from STDIN
-    53                                  ; Reads one char at a time until either:
-    54                                  ;   * LF has been hit
-    55                                  ;   * Max string length has been hit
-    56                                  ; Args:
-    57                                  ;   * rdi - input (address)
-    58                                  ;   * rsi - length (byte)
-    59                                  ; Syscall:
-    60                                  ;   ssize_t
-    61                                  ;   read(int fildes, void *buf, size_t nbyte);
-    62                                  ;        rdi         rsi        rdx
-    63                                  
-    64                                  global readInput
-    65                                  readInput:
-    66                                  
-    67 0000002B 4989F8                      mov     r8, rdi                                 ; input
-    68 0000002E 4989F1                      mov     r9, rsi                                 ; length
-    69 00000031 41BA00000000                mov     r10, 0                                  ; char counter and iterator
-    70                                  
-    71                                  readInputLoop:
-    72                                  
-    73 00000037 B803000002                  mov     rax, SYS_read
-    74 0000003C BF00000000                  mov     rdi, STDIN
-    75 00000041 488D35(00000000)            lea     rsi, [char]
-    76 00000048 BA01000000                  mov     rdx, 1
-    77 0000004D 0F05                        syscall
-    78                                  
-    79 0000004F 803E0A                      cmp     byte [rsi], LF
-    80 00000052 7412                        je      readInputDone
-    81                                  
-    82 00000054 4C0FB61E                    movzx     r11, byte [rsi]
-    83 00000058 4F891C10                    mov     [r8 + r10], r11
-    84                                  
-    85 0000005C 49FFC2                      inc     r10
-    86 0000005F 4D39CA                      cmp     r10, r9
-    87 00000062 7D02                        jge     readInputDone
-    88                                  
-    89 00000064 EBD1                        jmp     readInputLoop
-    90                                  
-    91                                  readInputDone:
-    92                                  
-    93 00000066 C3                          ret
-    94                                  
-    95                                  ; -----
-    96                                  ; Prints a string to the console
-    97                                  ; Args:
-    98                                  ;   * rdi - message (address)
-    99                                  ; Returns:
-   100                                  ;   * rax - number of bytes written to the console
-   101                                  ; Syscall:
-   102                                  ;   ssize_t
-   103                                  ;   write(int fildes, const void *buf, size_t nbyte);
-   104                                  ;         rdi         rsi              rdx
-   105                                  
-   106                                  global printString
-   107                                  printString:
-   108                                  
-   109 00000067 B804000002                  mov     rax, SYS_write
-   110 0000006C BA00000000                  mov     rdx, 0                  ; 3rd arg
-   111 00000071 4889FE                      mov     rsi, rdi                ; 2nd arg
-   112 00000074 BF01000000                  mov     rdi, STDOUT             ; 1st arg
-   113                                  
-   114 00000079 4989F2                      mov     r10, rsi                ; use r10 to iterate so we don't knock rsi off
+    24 00000010 486572652077617320-     yourMsg     db          "Here was your message:", LF, NULL
+    24 00000019 796F7572206D657373-
+    24 00000022 6167653A0A00       
+    25 00000028 32                      length      db          STRLEN                              ; Length of input to read from console (excluding LF and NULL)
+    26                                  
+    27                                  ; **********************************
+    28                                  
+    29                                  section     .bss
+    30                                  
+    31 00000000 ??                      char        resb        1                                   ; Individual character to read from input
+    32 00000001 <res 34h>               input       resb        STRLEN+2                            ; Console input (including LF and NULL)
+    33                                  
+    34                                  ; **********************************
+    35                                  
+    36                                  section     .text
+    37                                  global _start
+    38                                  _start:
+    39                                  
+    40 00000000 488D3D(00000000)            lea     rdi, [prompt]
+    41 00000007 E86F000000                  call    printString
+    42                                  
+    43 0000000C 488D3D(01000000)            lea     rdi, [input]
+    44 00000013 488B35(28000000)            mov     rsi, [length]
+    45 0000001A E80C000000                  call    readInput
+    46                                  
+    47                                  exit:
+    48 0000001F B801000002                  mov     rax, SYS_exit
+    49 00000024 BF00000000                  mov     rdi, SUCCESS
+    50 00000029 0F05                        syscall
+    51                                  
+    52                                  ; -----
+    53                                  ; Read input from STDIN
+    54                                  ; Reads one char at a time until either:
+    55                                  ;   * LF has been hit
+    56                                  ;   * Max string length has been hit
+    57                                  ; Args:
+    58                                  ;   * rdi - input (address)
+    59                                  ;   * rsi - length (byte)
+    60                                  ; Syscall:
+    61                                  ;   ssize_t
+    62                                  ;   read(int fildes, void *buf, size_t nbyte);
+    63                                  ;        rdi         rsi        rdx
+    64                                  
+    65                                  global readInput
+    66                                  readInput:
+    67                                  
+    68 0000002B 4989F8                      mov     r8, rdi                                 ; input
+    69 0000002E 4989F1                      mov     r9, rsi                                 ; length
+    70 00000031 41BA00000000                mov     r10, 0                                  ; char counter and iterator
+    71                                  
+    72                                  readInputLoop:
+    73                                  
+    74 00000037 B803000002                  mov     rax, SYS_read
+    75 0000003C BF00000000                  mov     rdi, STDIN
+    76 00000041 488D35(00000000)            lea     rsi, [char]
+    77 00000048 BA01000000                  mov     rdx, 1
+    78 0000004D 0F05                        syscall
+    79                                  
+    80 0000004F 803E0A                      cmp     byte [rsi], LF
+    81 00000052 7412                        je      readInputDone
+    82                                  
+    83 00000054 4C0FB61E                    movzx   r11, byte [rsi]
+    84 00000058 4F891C10                    mov     [r8 + r10], r11
+    85                                  
+    86 0000005C 49FFC2                      inc     r10
+    87 0000005F 4D39CA                      cmp     r10, r9
+    88 00000062 7D02                        jge     readInputDone
+    89                                  
+    90 00000064 EBD1                        jmp     readInputLoop
+    91                                  
+    92                                  readInputDone:
+    93                                  
+    94 00000066 488D3D(10000000)            lea     rdi, [yourMsg]
+    95 0000006D E809000000                  call    printString
+    96                                  
+    97 00000072 498D38                      lea     rdi, [r8]
+    98 00000075 E801000000                  call    printString
+    99                                  
+   100 0000007A C3                          ret
+   101                                  
+   102                                  ; -----
+   103                                  ; Prints a string to the console
+   104                                  ; Args:
+   105                                  ;   * rdi - message (address)
+   106                                  ; Returns:
+   107                                  ;   * rax - number of bytes written to the console
+   108                                  ; Syscall:
+   109                                  ;   ssize_t
+   110                                  ;   write(int fildes, const void *buf, size_t nbyte);
+   111                                  ;         rdi         rsi              rdx
+   112                                  
+   113                                  global printString
+   114                                  printString:
    115                                  
-   116                                  getLength:
-   117                                  
-   118                                      ; Get the length of the string so we know how many bytes to read from the buffer
-   119                                  
-   120 0000007C 41803A00                    cmp     byte [r10], NULL
-   121 00000080 7408                        je      doPrint
-   122 00000082 49FFC2                      inc     r10                     ; increase the pointer one byte
-   123 00000085 48FFC2                      inc     rdx                     ; increase the size of nbytes
-   124 00000088 EBF2                        jmp     getLength
-   125                                  
-   126                                  doPrint:
-   127                                  
-   128 0000008A 0F05                        syscall
-   129 0000008C C3                          ret
+   116 0000007B B804000002                  mov     rax, SYS_write
+   117 00000080 BA00000000                  mov     rdx, 0                  ; 3rd arg
+   118 00000085 4889FE                      mov     rsi, rdi                ; 2nd arg
+   119 00000088 BF01000000                  mov     rdi, STDOUT             ; 1st arg
+   120                                  
+   121 0000008D 4989F2                      mov     r10, rsi                ; use r10 to iterate so we don't knock rsi off
+   122                                  
+   123                                  getLength:
+   124                                  
+   125                                      ; Get the length of the string so we know how many bytes to read from the buffer
+   126                                  
+   127 00000090 41803A00                    cmp     byte [r10], NULL
+   128 00000094 7408                        je      doPrint
+   129 00000096 49FFC2                      inc     r10                     ; increase the pointer one byte
+   130 00000099 48FFC2                      inc     rdx                     ; increase the size of nbytes
+   131 0000009C EBF2                        jmp     getLength
+   132                                  
+   133                                  doPrint:
+   134                                  
+   135 0000009E 0F05                        syscall
+   136 000000A0 C3                          ret
