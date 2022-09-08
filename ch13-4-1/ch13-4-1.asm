@@ -91,6 +91,10 @@ readInputLoop:
 
 readInputDone:
 
+    mov     byte [r8 + r10], LF
+    inc     r10
+    mov     byte [r8 + r10], NULL
+
     lea     rdi, [yourMsg]
     call    printString
 
