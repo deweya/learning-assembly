@@ -4,6 +4,7 @@
 default rel
 
 %define     SYS_exit        0x2000001
+%define     SYS_write       0x2000004
 %define     SYS_open        0x2000005
 
 %define     SUCCESS         0
@@ -37,6 +38,11 @@ _start:
     lea     rdi, [filepath]
     call    openFile
 
+    ; Write to file
+    mov     rdi, rax
+    lea     rsi, [string]
+    call    writeFile
+
 exit:
 
     mov     rax, SYS_exit
@@ -66,5 +72,39 @@ openFile:
 
     mov     rax, SYS_open
     syscall
+
+    ret
+
+
+; -----
+; Write to an opened file
+; Args:
+;   * rdi - fd
+;   * rsi - void *buf
+; Returns:
+;   * rax - Number of bytes written, or -1 if err
+global writeFile
+writeFile:
+
+    ; -----
+    ; ssize_t
+    ; write(int fildes, const void *buf, size_t nbyte);
+    ;       rdi         rsi              rdx
+
+    ; At this point, rdi and rsi are already set
+    
+writeFileLoop:
+
+    cmp     byte [rsi], NULL
+    je      writeFileExit
+
+    mov     rax, SYS_write
+    mov     rdx, 1              ; rax and rdx gets cleared after syscall, so we need to always set them
+    syscall
+
+    inc     rsi
+    jmp     writeFileLoop
+
+writeFileExit:
 
     ret
