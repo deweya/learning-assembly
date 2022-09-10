@@ -1,0 +1,1 @@
+These exercises are from the book `x86_64 Assembly Language Programming with Ubuntu` by Ed Jorgensen, Ph.D.
