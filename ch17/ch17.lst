@@ -1,0 +1,76 @@
+     1                                  ; Chapter 17 - Buffered I/O
+     2                                  ; Implement a readLine function that:
+     3                                  ;   * Fills a buffer on first call
+     4                                  ;   * Reads up to LF on the buffer
+     5                                  ;   * Returns TRUE if a line was read
+     6                                  ;   * Returns FALSE if a line was not read (due to the file being already read or an error)
+     7                                  
+     8                                  default rel
+     9                                  
+    10                                  %define     SYS_exit        0x2000001
+    11                                  %define     SYS_read        0x2000003
+    12                                  %define     SYS_write       0x2000004
+    13                                  %define     SYS_open        0x2000005
+    14                                  %define     SYS_close       0x2000006
+    15                                  
+    16                                  %define     SUCCESS         0
+    17                                  %define     LF              10
+    18                                  %define     NULL            0
+    19                                  %define     TRUE            1
+    20                                  %define     FALSE           0
+    21                                  %define     STDOUT          1
+    22                                  
+    23                                  %define     O_RDONLY        0x0000
+    24                                  
+    25                                  %define     BUFFER_LEN      1000
+    26                                  %define     READLN_LEN      100
+    27                                  
+    28                                  ; **************************************
+    29                                  
+    30                                  section     .data
+    31                                  
+    32 00000000 2F55736572732F6175-     file        db          "/Users/austindewey/test/learning-assembly/ch17/file.txt", NULL
+    32 00000009 7374696E6465776579-
+    32 00000012 2F746573742F6C6561-
+    32 0000001B 726E696E672D617373-
+    32 00000024 656D626C792F636831-
+    32 0000002D 372F66696C652E7478-
+    32 00000036 7400               
+    33                                  
+    34                                  ; **************************************
+    35                                  
+    36                                  section     .text
+    37                                  global _start
+    38                                  _start:
+    39                                  
+    40                                      ; Open file
+    41 00000000 488D3D(00000000)            lea     rdi, [file]
+    42 00000007 E80C000000                  call    openFile
+    43                                  
+    44                                  exit:
+    45                                  
+    46 0000000C B801000002                  mov     rax, SYS_exit
+    47 00000011 BF00000000                  mov     rdi, SUCCESS
+    48 00000016 0F05                        syscall
+    49                                  
+    50                                  
+    51                                  ; -----
+    52                                  ; Open a (already existing) file
+    53                                  ; Args:
+    54                                  ;   * rdi - filepath (char *)
+    55                                  ; Returns:
+    56                                  ;   * rax - fd
+    57                                  global openFile
+    58                                  openFile:
+    59                                  
+    60                                      ; -----
+    61                                      ; int
+    62                                      ; open(const char *path, int oflag, mode_t mode);
+    63                                      ;      rdi               rsi        rdx
+    64                                  
+    65                                      ; rdi is already set, so nothing to do with the 1st arg
+    66                                  
+    67 00000018 BE00000000                  mov     rsi, O_RDONLY
+    68 0000001D B805000002                  mov     rax, SYS_open
+    69 00000022 0F05                        syscall
+    70 00000024 C3                          ret
