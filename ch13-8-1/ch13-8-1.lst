@@ -1,0 +1,84 @@
+     1                                  ; Chapter 13.8.1
+     2                                  ; Write (hardcoded) contents to a file
+     3                                  
+     4                                  default rel
+     5                                  
+     6                                  %define     SYS_exit        0x2000001
+     7                                  %define     SYS_open        0x2000005
+     8                                  
+     9                                  %define     SUCCESS         0
+    10                                  
+    11                                  %define     O_WRONLY        0x0001
+    12                                  %define     O_CREAT         0x00000200
+    13                                  %define     O_TRUNC         0x00000400
+    14                                  
+    15                                  %define     S_IRUSR         0q0000400
+    16                                  %define     S_IWUSR         0q0000200
+    17                                  %define     S_IRGRP         0q0000040
+    18                                  %define     S_IROTH         0q0000004
+    19                                  
+    20                                  %define     LF              10
+    21                                  %define     NULL            0
+    22                                  
+    23                                  ; *********************************
+    24                                  
+    25                                  section     .data
+    26                                  
+    27 00000000 416263646566676869-     string      db          "Abcdefghijklmnopqrstuvwxyz!", LF, NULL                                 ; The message we'll write to the file
+    27 00000009 6A6B6C6D6E6F707172-
+    27 00000012 737475767778797A21-
+    27 0000001B 0A00               
+    28 0000001D 2F55736572732F6175-     filepath    db          "/Users/austindewey/test/learning-assembly/ch13-8-1/file.txt", NULL     ; The file we'll create and write to
+    28 00000026 7374696E6465776579-
+    28 0000002F 2F746573742F6C6561-
+    28 00000038 726E696E672D617373-
+    28 00000041 656D626C792F636831-
+    28 0000004A 332D382D312F66696C-
+    28 00000053 652E74787400       
+    29                                  
+    30                                  ; *********************************
+    31                                  
+    32                                  section     .text
+    33                                  global _start
+    34                                  _start:
+    35                                  
+    36                                      ; Create file
+    37 00000000 488D3D(1D000000)            lea     rdi, [filepath]
+    38 00000007 E80C000000                  call    openFile
+    39                                  
+    40                                  exit:
+    41                                  
+    42 0000000C B801000002                  mov     rax, SYS_exit
+    43 00000011 BF00000000                  mov     rdi, SUCCESS
+    44 00000016 0F05                        syscall
+    45                                  
+    46                                  
+    47                                  ; -----
+    48                                  ; Open (and create if not exist) a file
+    49                                  ; Args:
+    50                                  ;   * rdi - filepath (char *)
+    51                                  ; Returns:
+    52                                  ;   * rax - fd
+    53                                  global openFile
+    54                                  openFile:
+    55                                  
+    56                                      ; -----
+    57                                      ; int
+    58                                      ; open(const char *path, int oflag, mode_t mode);
+    59                                      ;      rdi               rsi        rdx
+    60                                  
+    61                                      ; rdi is already set, so nothing to do with the 1st arg
+    62                                  
+    63 00000018 BE01000000                  mov     rsi, O_WRONLY               ; Set up open flags
+    64 0000001D 4881CE00020000              or      rsi, O_CREAT
+    65 00000024 4881CE00040000              or      rsi, O_TRUNC
+    66                                  
+    67 0000002B BA00010000                  mov     rdx, S_IRUSR                ; Set up 0644 file permissions
+    68 00000030 4881CA80000000              or      rdx, S_IWUSR
+    69 00000037 4883CA20                    or      rdx, S_IRGRP
+    70 0000003B 4883CA04                    or      rdx, S_IROTH
+    71                                  
+    72 0000003F B805000002                  mov     rax, SYS_open
+    73 00000044 0F05                        syscall
+    74                                  
+    75 00000046 C3                          ret
