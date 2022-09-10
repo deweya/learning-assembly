@@ -6,114 +6,141 @@
      6                                  %define     SYS_exit        0x2000001
      7                                  %define     SYS_write       0x2000004
      8                                  %define     SYS_open        0x2000005
-     9                                  
-    10                                  %define     SUCCESS         0
-    11                                  
-    12                                  %define     O_WRONLY        0x0001
-    13                                  %define     O_CREAT         0x00000200
-    14                                  %define     O_TRUNC         0x00000400
-    15                                  
-    16                                  %define     S_IRUSR         0q0000400
-    17                                  %define     S_IWUSR         0q0000200
-    18                                  %define     S_IRGRP         0q0000040
-    19                                  %define     S_IROTH         0q0000004
-    20                                  
-    21                                  %define     LF              10
-    22                                  %define     NULL            0
-    23                                  
-    24                                  ; *********************************
-    25                                  
-    26                                  section     .data
-    27                                  
-    28 00000000 416263646566676869-     string      db          "Abcdefghijklmnopqrstuvwxyz!", LF, NULL                                 ; The message we'll write to the file
-    28 00000009 6A6B6C6D6E6F707172-
-    28 00000012 737475767778797A21-
-    28 0000001B 0A00               
-    29 0000001D 2F55736572732F6175-     filepath    db          "/Users/austindewey/test/learning-assembly/ch13-8-1/file.txt", NULL     ; The file we'll create and write to
-    29 00000026 7374696E6465776579-
-    29 0000002F 2F746573742F6C6561-
-    29 00000038 726E696E672D617373-
-    29 00000041 656D626C792F636831-
-    29 0000004A 332D382D312F66696C-
-    29 00000053 652E74787400       
-    30                                  
-    31                                  ; *********************************
-    32                                  
-    33                                  section     .text
-    34                                  global _start
-    35                                  _start:
-    36                                  
-    37                                      ; Create file
-    38 00000000 488D3D(1D000000)            lea     rdi, [filepath]
-    39 00000007 E81B000000                  call    openFile
-    40                                  
-    41                                      ; Write to file
-    42 0000000C 4889C7                      mov     rdi, rax
-    43 0000000F 488D35(00000000)            lea     rsi, [string]
-    44 00000016 E81E000000                  call    writeFile
-    45                                  
-    46                                  exit:
-    47                                  
-    48 0000001B B801000002                  mov     rax, SYS_exit
-    49 00000020 BF00000000                  mov     rdi, SUCCESS
-    50 00000025 0F05                        syscall
-    51                                  
+     9                                  %define     SYS_close       0x2000006
+    10                                  
+    11                                  %define     SUCCESS         0
+    12                                  
+    13                                  %define     O_WRONLY        0x0001
+    14                                  %define     O_CREAT         0x00000200
+    15                                  %define     O_TRUNC         0x00000400
+    16                                  
+    17                                  %define     S_IRUSR         0q0000400
+    18                                  %define     S_IWUSR         0q0000200
+    19                                  %define     S_IRGRP         0q0000040
+    20                                  %define     S_IROTH         0q0000004
+    21                                  
+    22                                  %define     LF              10
+    23                                  %define     NULL            0
+    24                                  
+    25                                  ; *********************************
+    26                                  
+    27                                  section     .data
+    28                                  
+    29 00000000 416263646566676869-     string      db          "Abcdefghijklmnopqrstuvwxyz!", LF, NULL                                 ; The message we'll write to the file
+    29 00000009 6A6B6C6D6E6F707172-
+    29 00000012 737475767778797A21-
+    29 0000001B 0A00               
+    30 0000001D 2F55736572732F6175-     filepath    db          "/Users/austindewey/test/learning-assembly/ch13-8-1/file.txt", NULL     ; The file we'll create and write to
+    30 00000026 7374696E6465776579-
+    30 0000002F 2F746573742F6C6561-
+    30 00000038 726E696E672D617373-
+    30 00000041 656D626C792F636831-
+    30 0000004A 332D382D312F66696C-
+    30 00000053 652E74787400       
+    31                                  
+    32                                  ; *********************************
+    33                                  
+    34                                  section     .text
+    35                                  global _start
+    36                                  _start:
+    37                                  
+    38                                      ; Create file
+    39 00000000 488D3D(1D000000)            lea     rdi, [filepath]
+    40 00000007 E820000000                  call    openFile
+    41                                  
+    42                                      ; Write to file
+    43 0000000C 4889C7                      mov     rdi, rax
+    44 0000000F 488D35(00000000)            lea     rsi, [string]
+    45 00000016 E823000000                  call    writeFile
+    46                                  
+    47                                      ; Close file
+    48                                      ; rdi is already assigned to the fd
+    49 0000001B E835000000                  call    closeFile
+    50                                  
+    51                                  exit:
     52                                  
-    53                                  ; -----
-    54                                  ; Open (and create if not exist) a file
-    55                                  ; Args:
-    56                                  ;   * rdi - filepath (char *)
-    57                                  ; Returns:
-    58                                  ;   * rax - fd
-    59                                  global openFile
-    60                                  openFile:
-    61                                  
-    62                                      ; -----
-    63                                      ; int
-    64                                      ; open(const char *path, int oflag, mode_t mode);
-    65                                      ;      rdi               rsi        rdx
+    53 00000020 B801000002                  mov     rax, SYS_exit
+    54 00000025 BF00000000                  mov     rdi, SUCCESS
+    55 0000002A 0F05                        syscall
+    56                                  
+    57                                  
+    58                                  ; -----
+    59                                  ; Open (and create if not exist) a file
+    60                                  ; Args:
+    61                                  ;   * rdi - filepath (char *)
+    62                                  ; Returns:
+    63                                  ;   * rax - fd
+    64                                  global openFile
+    65                                  openFile:
     66                                  
-    67                                      ; rdi is already set, so nothing to do with the 1st arg
-    68                                  
-    69 00000027 BE01060000                  mov     rsi, O_WRONLY | O_CREAT | O_TRUNC               ; Set up open flags
-    70                                  
-    71 0000002C BAA4010000                  mov     rdx, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH      ; Set up 0644 file permissions
-    72                                  
-    73 00000031 B805000002                  mov     rax, SYS_open
-    74 00000036 0F05                        syscall
+    67                                      ; -----
+    68                                      ; int
+    69                                      ; open(const char *path, int oflag, mode_t mode);
+    70                                      ;      rdi               rsi        rdx
+    71                                  
+    72                                      ; rdi is already set, so nothing to do with the 1st arg
+    73                                  
+    74 0000002C BE01060000                  mov     rsi, O_WRONLY | O_CREAT | O_TRUNC               ; Set up open flags
     75                                  
-    76 00000038 C3                          ret
+    76 00000031 BAA4010000                  mov     rdx, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH      ; Set up 0644 file permissions
     77                                  
-    78                                  
-    79                                  ; -----
-    80                                  ; Write to an opened file
-    81                                  ; Args:
-    82                                  ;   * rdi - fd
-    83                                  ;   * rsi - void *buf
-    84                                  ; Returns:
-    85                                  ;   * rax - Number of bytes written, or -1 if err
-    86                                  global writeFile
-    87                                  writeFile:
-    88                                  
-    89                                      ; -----
-    90                                      ; ssize_t
-    91                                      ; write(int fildes, const void *buf, size_t nbyte);
-    92                                      ;       rdi         rsi              rdx
+    78 00000036 B805000002                  mov     rax, SYS_open
+    79 0000003B 0F05                        syscall
+    80                                  
+    81 0000003D C3                          ret
+    82                                  
+    83                                  
+    84                                  ; -----
+    85                                  ; Write to an opened file
+    86                                  ; Args:
+    87                                  ;   * rdi - fd
+    88                                  ;   * rsi - void *buf
+    89                                  ; Returns:
+    90                                  ;   * rax - Number of bytes written, or -1 if err
+    91                                  global writeFile
+    92                                  writeFile:
     93                                  
-    94                                      ; At this point, rdi and rsi are already set
-    95                                      
-    96                                  writeFileLoop:
-    97                                  
-    98 00000039 803E00                      cmp     byte [rsi], NULL
-    99 0000003C 7411                        je      writeFileExit
-   100                                  
-   101 0000003E B804000002                  mov     rax, SYS_write
-   102 00000043 BA01000000                  mov     rdx, 1              ; rax and rdx gets cleared after syscall, so we need to always set them
-   103 00000048 0F05                        syscall
-   104                                  
-   105 0000004A 48FFC6                      inc     rsi
-   106 0000004D EBEA                        jmp     writeFileLoop
-   107                                  
-   108                                  writeFileExit:
+    94                                      ; -----
+    95                                      ; ssize_t
+    96                                      ; write(int fildes, const void *buf, size_t nbyte);
+    97                                      ;       rdi         rsi              rdx
+    98                                  
+    99                                      ; At this point, rdi and rsi are already set
+   100                                      
+   101                                  writeFileLoop:
+   102                                  
+   103 0000003E 803E00                      cmp     byte [rsi], NULL
+   104 00000041 7411                        je      writeFileExit
+   105                                  
+   106 00000043 B804000002                  mov     rax, SYS_write
+   107 00000048 BA01000000                  mov     rdx, 1              ; rax and rdx gets cleared after syscall, so we need to always set them
+   108 0000004D 0F05                        syscall
    109                                  
-   110 0000004F C3                          ret
+   110 0000004F 48FFC6                      inc     rsi
+   111 00000052 EBEA                        jmp     writeFileLoop
+   112                                  
+   113                                  writeFileExit:
+   114                                  
+   115 00000054 C3                          ret
+   116                                  
+   117                                  
+   118                                  ; -----
+   119                                  ; Close an opened file
+   120                                  ; Args:
+   121                                  ;   * rdi - fd
+   122                                  ; Returns:
+   123                                  ;   * rax - 0 (success), -1 (error)
+   124                                  global closeFile
+   125                                  closeFile:
+   126                                  
+   127                                      ; -----
+   128                                      ; int
+   129                                      ; close(int fildes);
+   130                                      ;       rdi
+   131                                  
+   132                                      ; rdi is already set at this point
+   133                                  
+   134 00000055 B806000002                  mov     rax, SYS_close
+   135 0000005A 0F05                        syscall
+   136                                  
+   137 0000005C C3                          ret
