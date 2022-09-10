@@ -69,16 +69,11 @@
     60                                  
     61                                      ; rdi is already set, so nothing to do with the 1st arg
     62                                  
-    63 00000018 BE01000000                  mov     rsi, O_WRONLY               ; Set up open flags
-    64 0000001D 4881CE00020000              or      rsi, O_CREAT
-    65 00000024 4881CE00040000              or      rsi, O_TRUNC
+    63 00000018 BE01060000                  mov     rsi, O_WRONLY | O_CREAT | O_TRUNC               ; Set up open flags
+    64                                  
+    65 0000001D BAA4010000                  mov     rdx, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH      ; Set up 0644 file permissions
     66                                  
-    67 0000002B BA00010000                  mov     rdx, S_IRUSR                ; Set up 0644 file permissions
-    68 00000030 4881CA80000000              or      rdx, S_IWUSR
-    69 00000037 4883CA20                    or      rdx, S_IRGRP
-    70 0000003B 4883CA04                    or      rdx, S_IROTH
-    71                                  
-    72 0000003F B805000002                  mov     rax, SYS_open
-    73 00000044 0F05                        syscall
-    74                                  
-    75 00000046 C3                          ret
+    67 00000022 B805000002                  mov     rax, SYS_open
+    68 00000027 0F05                        syscall
+    69                                  
+    70 00000029 C3                          ret

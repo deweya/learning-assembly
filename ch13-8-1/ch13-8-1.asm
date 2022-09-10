@@ -60,14 +60,9 @@ openFile:
 
     ; rdi is already set, so nothing to do with the 1st arg
 
-    mov     rsi, O_WRONLY               ; Set up open flags
-    or      rsi, O_CREAT
-    or      rsi, O_TRUNC
+    mov     rsi, O_WRONLY | O_CREAT | O_TRUNC               ; Set up open flags
 
-    mov     rdx, S_IRUSR                ; Set up 0644 file permissions
-    or      rdx, S_IWUSR
-    or      rdx, S_IRGRP
-    or      rdx, S_IROTH
+    mov     rdx, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH      ; Set up 0644 file permissions
 
     mov     rax, SYS_open
     syscall
